@@ -1,5 +1,3 @@
-# DspBlueprintScreen
-戴森球蓝图筛选工具
 # dsp_blueprint_screen
 
 ## Project setup
