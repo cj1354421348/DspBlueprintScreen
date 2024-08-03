@@ -1,5 +1,7 @@
-# dsp_blueprint_screen
-
+# 环境
+```
+ node 16.20.2 
+```
 ## Project setup
 ```
 yarn install
@@ -7,12 +9,12 @@ yarn install
 
 ### Compiles and hot-reloads for development
 ```
-yarn serve
+yarn electron:serve
 ```
 
 ### Compiles and minifies for production
 ```
-yarn build
+yarn electron:build
 ```
 
 ### Customize configuration
