@@ -10,6 +10,7 @@ import { defineComponent } from "vue";
 import { fromStr } from "@/blueprint/parser";
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 import {getAllFiles,getExePath,readFiles} from "@/AppIO/Read";
+import {MapData} from "@/MyIns/MapData";
 const aaa = () => {
 	let inputData ='';
 	//let rootPath = getExePath("\\test");
@@ -17,6 +18,7 @@ const aaa = () => {
 	let test = getAllFiles(rootPath);
 	console.log(test);
 	readFiles(test);
+	console.log(MapData.inst.testData);
 	let blueprintData;
 	try {
 		blueprintData = fromStr(inputData);
