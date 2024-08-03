@@ -16,9 +16,10 @@ const aaa = () => {
 	//let rootPath = getExePath("\\test");
 	let rootPath = "D:\\project\\dsp_blueprint_screen\\test";//网页测试
 	let test = getAllFiles(rootPath);
-	console.log(test);
-	readFiles(test);
-	console.log(MapData.inst.testData);
+	// console.log(test);
+	// readFiles(test);
+	MapData.getInstance().testData1();
+	console.log(MapData.getInstance().testData.get("adadad"));
 	let blueprintData;
 	try {
 		blueprintData = fromStr(inputData);

@@ -1,4 +1,12 @@
-import{Singleton} from "@/MyIns/BaseIns";
-export class MapData extends Singleton<MapData>() {
-    public testData = "测试单例";
+import { newBaseData } from "@/DataType/BaseData";
+import{BaseIns} from "@/MyIns/BaseIns";
+export class MapData extends BaseIns {
+    constructor(){
+        super();
+
+    }
+    public testData = new Map<string,newBaseData>();
+    public testData1(){
+        this.testData.set("adadad",new newBaseData("a","aa","aaa","aaaa"));
+    }
 }
