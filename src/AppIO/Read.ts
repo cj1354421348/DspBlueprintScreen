@@ -1,6 +1,7 @@
 const electron = window.require && window.require('electron');
 const path = require('path');
 const fs = require('fs');
+import { MapData } from '@/MyIns/MapData';
 import * as crypto from 'crypto';
 /**
  * 读取蓝图文件路径
@@ -39,33 +40,31 @@ export function getAllFiles(dirPath: string) {
  * @returns
  */
 export function getExePath(addPath='') {
-    // return path.dirname("C:");
-    //return path.dirname(electron.remote.app.getPath("exe"))+addPath;
+    return path.dirname("C:");
+    return path.dirname(electron.remote.app.getPath("exe"))+addPath;
   }
 /**
  * 读取数据内所有文件内容
  * @param filePaths 
  */
 // 读取文件内容和计算 MD5 的函数
-export async function readFiles(filePaths: string[]): Promise<void> {
+export async function readFiles(filePaths: string[]): Promise<Map<string, string>> {
+    let result = new Map<string, string>();
     for (const filePath of filePaths) {
         try {
             const stats = await fs.promises.stat(filePath);
-
             if (stats.isFile()) {
                 // 读取文件内容
                 const data = await fs.promises.readFile(filePath, 'utf8');
                 const md5Hash = await calculateMD5(filePath);
-                
-                console.log(`Content of ${filePath}:\n`, data);
-                console.log(`MD5 Hash of ${filePath}: ${md5Hash}\n`);
-            } else {
-                console.log(`${filePath} is not a file.`);
+                result.set(md5Hash, data); // 或者你想将文件内容和 MD5 哈希值一一对应
+                // MapData.getInstance().setDeftData(md5Hash);
             }
-        } catch (err:any) {
-            console.error(`Error processing file ${filePath}:`, err.message);
+        } catch (error) {
+            console.error(`Failed to read file ${filePath}:`, error);
         }
     }
+    return result; // 确保函数总是返回一个字符串
 }
 
 // 计算文件的 MD5 哈希值的函数
