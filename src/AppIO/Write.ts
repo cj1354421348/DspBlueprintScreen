@@ -6,7 +6,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // 创建目录（如果不存在）
-// 创建目录（如果不存在）
 export function createDir(fileName: string, content: any): Promise<string> {
     const dirPath = 'D:\\project\\dsp_blueprint_screen\\test2';
     return new Promise((resolve, reject) => {

@@ -14,24 +14,26 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from "vue";
-import { fromStr } from "@/blueprint/parser";
+import { computed, defineComponent } from "vue";
+import { BlueprintData, fromStr } from "@/blueprint/parser";
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 import { getAllFiles, getExePath, readFiles } from "@/AppIO/Read";
 import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
 import {createDir} from "@/AppIO/Write";
+import {itemsMap} from "@/data/itemsData";
 const aaa = async () => {
 	let inputData;
 	//let rootPath = getExePath("\\test");
 	let rootPath = "D:\\project\\dsp_blueprint_screen\\test"; //网页测试
 	let test = getAllFiles(rootPath);
-	console.log(test);
 	inputData = await readFiles(test);
-	let blueprintData;
+	let blueprintData:BlueprintData;
+
 	inputData.forEach(async (element,index) => {
 		try {
 			blueprintData = fromStr(element);
+			console.log(buildingCounter(blueprintData));
 			//let a = JSON.stringify(blueprintData);
 			let outUrl = await createDir(index, blueprintData);
 			let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc,index,"原始路径",outUrl);
@@ -46,4 +48,12 @@ const aaa = async () => {
 		MapData.getInstance().saveData();
 
 };
+const buildingCounter = function(data:BlueprintData) {
+	const counter = new Map<number, number>();
+	for (const b of data.buildings) {
+		const count = counter.get(b.itemId) ?? 0;
+		counter.set(b.itemId, count + 1);
+	}
+	return counter;
+	}
 </script>

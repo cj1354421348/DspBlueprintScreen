@@ -13,7 +13,6 @@ export class MapData extends BaseIns {
     public saveData() {
         const mapObject = Object.fromEntries(this.testData);
         // 将对象转换为 JSON 字符串
-
         createDir("主文件", mapObject);
     }
 }

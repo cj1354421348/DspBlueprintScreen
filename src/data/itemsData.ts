@@ -790,3 +790,4 @@ export const items: Item[] = [
         productive: true,
     },
 ];
+export const itemsMap = new Map(Object.entries(items.map(item => [item.id, item])));
