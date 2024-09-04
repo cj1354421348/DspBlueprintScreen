@@ -5,8 +5,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-// 创建目录（如果不存在）
-export function createDir(fileName: string, content: any): Promise<string> {
+/**
+ *  保存Map类型文件到系统
+ * @param fileName 
+ * @param content 
+ * @returns 
+ */
+export function createDir(fileName: string, content: Map<any, any>): Promise<string> {
+    const mapObject = Object.fromEntries(content);
     const dirPath = 'D:\\project\\dsp_blueprint_screen\\test2';
     return new Promise((resolve, reject) => {
         fs.mkdir(dirPath, { recursive: true }, (err) => {
@@ -17,8 +23,8 @@ export function createDir(fileName: string, content: any): Promise<string> {
             }
             // 写入文件
             const filePath = path.join(dirPath, fileName + '.json');
-            content = JSON.stringify(content);
-            fs.writeFile(filePath, content, 'utf8', (err) => {
+            let contentStr = JSON.stringify(mapObject);
+            fs.writeFile(filePath, contentStr, 'utf8', (err) => {
                 if (err) {
                     console.error('写入文件时出错:', err);
                     reject(err);

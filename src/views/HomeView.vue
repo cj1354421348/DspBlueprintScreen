@@ -22,6 +22,7 @@ import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
 import {createDir} from "@/AppIO/Write";
 import {itemsMap} from "@/data/itemsData";
+import { itemIconId, recipeIconId2 } from "@/data/icons";
 const aaa = async () => {
 	let inputData;
 	//let rootPath = getExePath("\\test");
@@ -33,9 +34,9 @@ const aaa = async () => {
 	inputData.forEach(async (element,index) => {
 		try {
 			blueprintData = fromStr(element);
-			console.log(buildingCounter(blueprintData));
+			let okData = buildingCounter(blueprintData);
 			//let a = JSON.stringify(blueprintData);
-			let outUrl = await createDir(index, blueprintData);
+			let outUrl = await createDir(index, okData);
 			let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc,index,"原始路径",outUrl);
 			MapData.getInstance().setData(index,oneBlueprintData);
 			console.log(MapData.getInstance().testData);
@@ -51,8 +52,12 @@ const aaa = async () => {
 const buildingCounter = function(data:BlueprintData) {
 	const counter = new Map<number, number>();
 	for (const b of data.buildings) {
-		const count = counter.get(b.itemId) ?? 0;
-		counter.set(b.itemId, count + 1);
+		if(b.recipeId == 0 )
+			continue;
+		const count = recipeIconId2(b.recipeId);
+		count.forEach(c => {
+			counter.set(c.item.id, (counter.get(c.item.id) ?? 0) + 1);
+		});
 	}
 	return counter;
 	}
