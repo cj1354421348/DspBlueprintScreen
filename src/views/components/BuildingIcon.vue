@@ -38,7 +38,7 @@ const toggleSelection = () => {
 .icon {
     display: inline-block;
     position: relative;
-    width: 3.8rem;
+    width: 3.7rem;
     border: 2px solid transparent;
     transition: border-color 0.3s;
 
