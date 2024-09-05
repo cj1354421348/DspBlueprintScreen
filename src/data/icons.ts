@@ -1,17 +1,17 @@
 import { itemsMap } from "./items";
 import { recipesMap } from "./recipes";
 
-// export async function itemRecipeIconUrl(name:string): Promise<string> {
-//     return (await import(/* webpackMode: "eager" */`@/assets/icons/item_recipe/${name}.png`)).default;
-// }
+export async function itemRecipeIconUrl(name:string): Promise<string> {
+    return (await import(/* webpackMode: "eager" */`@/assets/icons/item_recipe/${name}.png`)).default;
+}
 
-// export async function techIconUrl(techId: number): Promise<string> {
-//     return (await import(/* webpackMode: "eager" */`@/assets/icons/tech/${techId}.png`)).default;
-// }
+export async function techIconUrl(techId: number): Promise<string> {
+    return (await import(/* webpackMode: "eager" */`@/assets/icons/tech/${techId}.png`)).default;
+}
 
-// export async function signalIconUrl(signalId: number): Promise<string> {
-//     return (await import(/* webpackMode: "eager" */`@/assets/icons/signal/signal-${signalId}.png`)).default;
-// }
+export async function signalIconUrl(signalId: number): Promise<string> {
+    return (await import(/* webpackMode: "eager" */`@/assets/icons/signal/signal-${signalId}.png`)).default;
+}
 
 export function signalIconId(signalId: number) { return signalId; }
 export function itemIconId(itemId: number) { return itemId; }
@@ -27,17 +27,17 @@ export function recipeIconId2(recipeId: number) {
 }
 export function techIconId(techId: number) { return techId + 40000; }
 
-// export function iconUrl(iconId: number) {
-//     if (iconId < 1000)
-//         return signalIconUrl(iconId);
-//     if (iconId < 20000)
-//         return itemRecipeIconUrl(itemsMap.get(iconId)!.icon);
-//     if (iconId < 40000)
-//         return itemRecipeIconUrl(recipesMap.get(iconId - 20000)!.icon!);
-//     if (iconId < 60000)
-//         return techIconUrl(iconId - 40000);
-//     throw new Error(`Unknown icon ${iconId}`)
-// }
+export function iconUrl(iconId: number) {
+    if (iconId < 1000)
+        return signalIconUrl(iconId);
+    if (iconId < 20000)
+        return itemRecipeIconUrl(itemsMap.get(iconId)!.icon);
+    if (iconId < 40000)
+        return itemRecipeIconUrl(recipesMap.get(iconId - 20000)!.icon!);
+    if (iconId < 60000)
+        return techIconUrl(iconId - 40000);
+    throw new Error(`Unknown icon ${iconId}`)
+}
 
 // export function* allIconIds() {
 //     for (const i of itemsMap.values())

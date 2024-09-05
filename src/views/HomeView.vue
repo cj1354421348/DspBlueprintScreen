@@ -1,16 +1,16 @@
 <template>
 	<div class="home">
 		<img @click="aaa" alt="Vue logo" src="../assets/logo.png" />
-		<HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
 	</div>
-	<div class="mb-4">
+	<BuildingIcon v-for="item in items" :key="item.id" :item="item" />
+	<!-- <div class="mb-4">
 		<el-button>Default</el-button>
 		<el-button type="primary">Primary</el-button>
 		<el-button type="success">Success</el-button>
 		<el-button type="info">Info</el-button>
 		<el-button type="warning">Warning</el-button>
 		<el-button type="danger">Danger</el-button>
-	</div>
+	</div> -->
 </template>
 
 <script setup lang="ts">
@@ -21,8 +21,9 @@ import { getAllFiles, getExePath, readFiles } from "@/AppIO/Read";
 import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
 import {createDir} from "@/AppIO/Write";
-import {itemsMap} from "@/data/itemsData";
+import {itemsMap,items} from "@/data/itemsData";
 import { itemIconId, recipeIconId2 } from "@/data/icons";
+import BuildingIcon from "./components/BuildingIcon.vue";
 const aaa = async () => {
 	let inputData;
 	//let rootPath = getExePath("\\test");
@@ -30,7 +31,7 @@ const aaa = async () => {
 	let test = getAllFiles(rootPath);
 	inputData = await readFiles(test);
 	let blueprintData:BlueprintData;
-
+	console.log(itemsMap);
 	inputData.forEach(async (element,index) => {
 		try {
 			blueprintData = fromStr(element);
@@ -56,8 +57,10 @@ const buildingCounter = function(data:BlueprintData) {
 			continue;
 		const count = recipeIconId2(b.recipeId);
 		count.forEach(c => {
-			counter.set(c.item.id, (counter.get(c.item.id) ?? 0) + 1);
+			counter.set(c.item.id, (counter.get(c.item.id) ?? 0) + 1); 
+
 		});
+		
 	}
 	return counter;
 	}
