@@ -2,7 +2,14 @@
 	<div class="home">
 		<img @click="aaa" alt="Vue logo" src="../assets/logo.png" />
 	</div>
-	<BuildingIcon v-for="item in items" :key="item.id" :item="item" />
+	<el-divider>
+		<span>包含</span>
+	</el-divider>
+	<BuildingIcon v-for="item in items" :key="item.id" :item="item" :isHave=true />
+	<el-divider>
+		<span>不包含</span>
+	</el-divider>
+	<BuildingIcon v-for="item in items" :key="item.id" :item="item" :isHave=false />
 	<!-- <div class="mb-4">
 		<el-button>Default</el-button>
 		<el-button type="primary">Primary</el-button>
@@ -20,8 +27,8 @@ import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 import { getAllFiles, getExePath, readFiles } from "@/AppIO/Read";
 import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
-import {createDir} from "@/AppIO/Write";
-import {itemsMap,items} from "@/data/itemsData";
+import { createDir } from "@/AppIO/Write";
+import { itemsMap, items } from "@/data/itemsData";
 import { itemIconId, recipeIconId2 } from "@/data/icons";
 import BuildingIcon from "./components/BuildingIcon.vue";
 const aaa = async () => {
@@ -30,16 +37,16 @@ const aaa = async () => {
 	let rootPath = "D:\\project\\dsp_blueprint_screen\\test"; //网页测试
 	let test = getAllFiles(rootPath);
 	inputData = await readFiles(test);
-	let blueprintData:BlueprintData;
+	let blueprintData: BlueprintData;
 	console.log(itemsMap);
-	inputData.forEach(async (element,index) => {
+	inputData.forEach(async (element, index) => {
 		try {
 			blueprintData = fromStr(element);
 			let okData = buildingCounter(blueprintData);
 			//let a = JSON.stringify(blueprintData);
 			let outUrl = await createDir(index, okData);
-			let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc,index,"原始路径",outUrl);
-			MapData.getInstance().setData(index,oneBlueprintData);
+			let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc, index, "原始路径", outUrl);
+			MapData.getInstance().setData(index, oneBlueprintData);
 			console.log(MapData.getInstance().testData);
 		} catch (e) {
 			let msg = "导入的蓝图数据有误";
@@ -47,21 +54,21 @@ const aaa = async () => {
 			return;
 		}
 	});
-		MapData.getInstance().saveData();
+	MapData.getInstance().saveData();
 
 };
-const buildingCounter = function(data:BlueprintData) {
+const buildingCounter = function (data: BlueprintData) {
 	const counter = new Map<number, number>();
 	for (const b of data.buildings) {
-		if(b.recipeId == 0 )
+		if (b.recipeId == 0)
 			continue;
 		const count = recipeIconId2(b.recipeId);
 		count.forEach(c => {
-			counter.set(c.item.id, (counter.get(c.item.id) ?? 0) + 1); 
+			counter.set(c.item.id, (counter.get(c.item.id) ?? 0) + 1);
 
 		});
-		
+
 	}
 	return counter;
-	}
+}
 </script>
