@@ -2,6 +2,7 @@ const electron = window.require && window.require('electron');
 const path = require('path');
 const fs = require('fs');
 import { MapData } from '@/MyIns/MapData';
+import { BlueprintData } from '@/blueprint/parser';
 import * as crypto from 'crypto';
 /**
  * 读取蓝图文件路径
@@ -29,7 +30,26 @@ export function getAllFiles(dirPath: string) {
 
     return results; 
 }
-// 使用示例
+
+/**
+ * 读取 JSON 文件
+ * @param filePath 文件路径
+ * @returns 该文件的内容，如果不是 JSON 文件或读取失败则返回 null
+ */
+export function readJsonFile(filePath: string):Object | null {
+  // 检查文件扩展名是否为 .json
+  if (!filePath.endsWith('.json')) {
+    console.error(`文件 ${filePath} 不是 JSON 文件`);
+    return null;
+  }
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(fileContent);
+  } catch (error) {
+    console.error(`读取JSON文件出错：${error}`);
+    return null;
+  }
+} 
 // const directoryPath = 'C:\\your\\directory\\path'; // 替换为你的目录路径
 // const allFiles = getAllFiles(directoryPath);
 
@@ -48,24 +68,23 @@ export function getExePath(addPath='') {
  * @param filePaths 
  */
 // 读取文件内容和计算 MD5 的函数
-export async function readFiles(filePaths: string[]): Promise<Map<string, string>> {
-    let result = new Map<string, string>();
+export async function readFiles(filePaths: string[]): Promise<Map<string, { filePath: string, data: string }>> {
+    let result = new Map<string, { filePath: string, data: string }>();
     for (const filePath of filePaths) {
-        try {
-            const stats = await fs.promises.stat(filePath);
-            if (stats.isFile()) {
-                // 读取文件内容
-                const data = await fs.promises.readFile(filePath, 'utf8');
-                const md5Hash = await calculateMD5(filePath);
-                result.set(md5Hash, data); // 或者你想将文件内容和 MD5 哈希值一一对应
-                // MapData.getInstance().setDeftData(md5Hash);
-            }
-        } catch (error) {
-            console.error(`Failed to read file ${filePath}:`, error);
+      try {
+        const stats = await fs.promises.stat(filePath);
+        if (stats.isFile() && path.extname(filePath) === '.txt') {
+          // 读取文件内容
+          const data = await fs.promises.readFile(filePath, 'utf8');
+          const md5Hash = await calculateMD5(filePath);
+          result.set(md5Hash, { filePath, data }); 
         }
+      } catch (error) {
+        console.error(`Failed to read file ${filePath}:`, error);
+      }
     }
-    return result; // 确保函数总是返回一个字符串
-}
+    return result; 
+  }
 
 // 计算文件的 MD5 哈希值的函数
 function calculateMD5(filePath: string): Promise<string> {
