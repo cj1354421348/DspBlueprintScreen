@@ -60,6 +60,7 @@ export function getExePath() {
   //return path.dirname("C:");
   return path.dirname(electron.remote.app.getPath("exe"));
 }
+
 export function getSystem() {
   //这是mac系统
   if (process.platform == "darwin") {

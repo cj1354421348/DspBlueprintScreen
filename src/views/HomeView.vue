@@ -14,6 +14,7 @@
 		<span>不包含</span>
 	</el-divider>
 	<BuildingIcon v-for="item in items" :key="item.id" :item="item" :isHave=false />
+	<el-button :plain="true" @click="open2">Success</el-button>
 </template>
 
 <script setup lang="ts">
@@ -26,6 +27,7 @@ import { items } from "@/data/itemsData";
 import { recipeIconId2 } from "@/data/icons";
 import BuildingIcon from "./components/BuildingIcon.vue";
 import { SeleceManag } from "@/MyIns/SeleceManag";
+import { ElMessage } from "element-plus";
 const outBluepr = new Set<string>();
 const config:config = getConfigPath() as config;
 
@@ -104,5 +106,13 @@ const buildingCounter = function (data: BlueprintData) {
 		});
 	}
 	return counter;
+}
+const open2 = () => {
+	let aaa = getExePath();
+  ElMessage({
+    showClose: true,
+    message: aaa,
+    type: 'success',
+  })
 }
 </script>
