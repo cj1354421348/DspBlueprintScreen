@@ -12,6 +12,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@electron/remote": "^2.1.2",
     "@element-plus/icons-vue": "^2.3.1",
     "core-js": "^3.8.3",
     "element-plus": "^2.8.1",

@@ -4,7 +4,8 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-
+import { getConfigPath } from './Read';
+const config:config = getConfigPath() as config;
 /**
  *  保存Map类型文件到系统
  * @param fileName 
@@ -13,7 +14,7 @@ import * as path from 'path';
  */
 export function createDir(fileName: string, content: Map<any, any>): Promise<string> {
     const mapObject = Object.fromEntries(content);
-    const dirPath = 'D:\\project\\dsp_blueprint_screen\\test2';
+    const dirPath = config.stagingPath;
     return new Promise((resolve, reject) => {
         fs.mkdir(dirPath, { recursive: true }, (err) => {
             if (err) {
@@ -33,6 +34,25 @@ export function createDir(fileName: string, content: Map<any, any>): Promise<str
                 resolve(filePath);
             });
         });
+    });
+};
+/**
+ *  保存字符串类型文件到系统    
+ * @param fileName 源路径
+ * @param content 目标文件路径
+ * @returns 
+ */
+export function copyFile(src: string, dest: string): Promise<void> {
+    const destPath = path.join(dest, path.basename(src));
+    return new Promise((resolve, reject) => {
+      fs.copyFile(src, destPath, (err) => {
+        if (err) {
+          console.error('拷贝文件时出错:', err);
+          reject(err);
+          return;
+        }
+        resolve();
+      });
     });
 }
 

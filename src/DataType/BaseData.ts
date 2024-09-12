@@ -12,6 +12,7 @@ interface BaseData {
  * @param outPath 对应的解析后路径
  */
 export class newBaseData implements BaseData{
+
     constructor(name:string,md5:string,path:string,outPath:string){
         this.name = name;
         this.MD5 = md5;

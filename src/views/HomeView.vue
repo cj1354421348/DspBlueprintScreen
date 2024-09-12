@@ -2,8 +2,8 @@
 	<div class="mb-4">
 		<el-button @click="populateSpawnData" type="primary">初始化蓝图</el-button>
 		<el-button @click="simpleFilter" type="primary">筛选蓝图</el-button>
-		<el-button type="success">导出筛选的蓝图</el-button>
-		<el-button type="warning">Warning</el-button>
+		<el-button @click="exportFilterBluepr" type="success">导出筛选的蓝图</el-button>
+		<el-button @click = "clearData" type="warning">清空选择数据</el-button>
 		<el-button type="danger">Danger</el-button>
 	</div>
 	<el-divider>
@@ -18,22 +18,27 @@
 
 <script setup lang="ts">
 import { BlueprintData, fromStr } from "@/blueprint/parser";
-import { getAllFiles, readFiles, readJsonFile } from "@/AppIO/Read";
+import { getAllFiles, getConfigPath, getExePath, readFiles, readJsonFile } from "@/AppIO/Read";
 import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
-import { createDir } from "@/AppIO/Write";
+import { copyFile, createDir } from "@/AppIO/Write";
 import { items } from "@/data/itemsData";
 import { recipeIconId2 } from "@/data/icons";
 import BuildingIcon from "./components/BuildingIcon.vue";
 import { SeleceManag } from "@/MyIns/SeleceManag";
 const outBluepr = new Set<string>();
+const config:config = getConfigPath() as config;
+
+
 /**
  * 初始化蓝图
  */
 const populateSpawnData = async () => {
+	//console.log(config.outputPath);
 	let inputData;
+	console.log();
 	//let rootPath = getExePath("\\test");
-	let rootPath = "D:\\project\\dsp_blueprint_screen\\test"; //网页测试
+	let rootPath = config.rootPath; //网页测试
 	let test = getAllFiles(rootPath);
 	inputData = await readFiles(test);
 	let blueprintData: BlueprintData;
@@ -52,8 +57,8 @@ const populateSpawnData = async () => {
 			return;
 		}
 	});
-	console.log(MapData.getInstance().testData);
 	MapData.getInstance().saveData();
+	console.log(MapData.getInstance().testData);
 
 };
 const simpleFilter = function () {
@@ -61,15 +66,27 @@ const simpleFilter = function () {
 	const data = MapData.getInstance().testData;
 	const excludeData = SeleceManag.getInstance().seleceIconArr;
 	data.forEach((element,index) => {
-		const counter = readJsonFile(element.outPath);
+		const counter:{} = readJsonFile(element.outPath);
 		if (counter) {
-			let hasOverlap = excludeData.some(value => Object.keys(counter).includes(String(value)));
+			let hasOverlap = excludeData.every(value => Object.keys(counter).includes(String(value)));
 			if (hasOverlap) {
 				outBluepr.add(index);
 			}
 		}
 	});
+}
+//导出筛选蓝图
+const exportFilterBluepr = function () {
 	console.log(outBluepr);
+	outBluepr.forEach(index => {
+		 let data = MapData.getInstance().testData.get(index);
+		if (data) {
+			copyFile(data.path,config.outputPath);
+		}
+	});
+}
+const clearData = function () {
+	SeleceManag.getInstance().clear();
 }
 /**
  * 计算蓝图中每种建筑的数量

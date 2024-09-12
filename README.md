@@ -19,3 +19,6 @@ yarn electron:build
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### 蓝图解析参考
+https://github.com/huww98/dsp_blueprint_editor

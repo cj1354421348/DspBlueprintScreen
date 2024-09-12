@@ -73,5 +73,9 @@ export class SeleceManag extends BaseIns {
     public haveExcludeIcon(icon: number): boolean {
         return this.excludeIcon.has(icon);
     }
+    public clear() {
+        this.seleceIcon.clear();
+        this.excludeIcon.clear();
+    }
 
 }
