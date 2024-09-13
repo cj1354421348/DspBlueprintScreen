@@ -48,6 +48,20 @@ export function readJsonFile(filePath: string): any {
     return null;
   }
 }
+//读取配置文件
+export function readConfigFile(filePath: string): config|null {
+    if (!filePath.endsWith('.json')) {
+    console.error(`文件 ${filePath} 不是 JSON 文件`);
+    return null;
+  }
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(fileContent);
+  } catch (error) {
+    console.error(`读取JSON文件出错：${error}`);
+    return null;
+  }
+}
 // const directoryPath = 'C:\\your\\directory\\path'; // 替换为你的目录路径
 // const allFiles = getAllFiles(directoryPath);
 
@@ -81,16 +95,12 @@ export function getSystem() {
 */
 export function getConfigPath() {
 
-  if (location.protocol === "http:")
-    return {
-      "rootPath": "D:\\game\\Blueprint",
-      "stagingPath": "D:\\project\\dsp_blueprint_screen\\test2",
-      "outputPath": "C:\\Users\\Administrator\\Documents\\Dyson Sphere Program\\Blueprint"
-    };
+  if (!electron.remote.app.isPackaged)
+    return readConfigFile("D:\\project\\dsp_blueprint_screen\\config.json");
   if (getSystem() === 1) {
-    return getExePath() + "/config.conf";
+    return readConfigFile(getExePath() + "/config.json");
   } else {
-    return getExePath() + "\\config.conf";
+    return readConfigFile(getExePath() + "\\config.json");
   }
 }
 /**
