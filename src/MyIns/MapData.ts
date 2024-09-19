@@ -18,10 +18,14 @@ export class MapData extends BaseIns {
     }
     public getDataforLong(mainPath:string){
         const data = readJsonFile(mainPath)  as { [key: string]: any } ;
+        if (data === null) return;
         Object.keys(data).forEach((key) => {
             const element = data[key];
             this.setData(key, element);
             // 处理每个元素
         });
+    }
+    public clearData() {
+        this.testData.clear();
     }
 }

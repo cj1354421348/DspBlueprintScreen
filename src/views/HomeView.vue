@@ -3,13 +3,13 @@
 		<el-button @click="populateSpawnData" type="primary">初始化蓝图</el-button>
 		<el-button @click="simpleFilter" type="primary">筛选蓝图</el-button>
 		<el-button @click="exportFilterBluepr" type="success">导出筛选的蓝图</el-button>
-		<el-button  @click="clearData" type="warning">清空选择数据</el-button>
+		<el-button @click="clearData" type="warning">清空选择数据</el-button>
 		<!-- <el-button type="danger">Danger</el-button> -->
 	</div>
 	<el-divider>
 		<span>包含</span>
 	</el-divider>
-	<BuildingIcon ref="buildingIcons"  v-for="item in items" :key="item.id" :item="item" :isHave=true />
+	<BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=true />
 	<el-divider>
 		<span>不包含</span>
 	</el-divider>
@@ -30,18 +30,20 @@ import { SeleceManag } from "@/MyIns/SeleceManag";
 import { ElMessage } from "element-plus";
 import { MapPool } from "@/Toop/MapPool";
 import { onMounted, ref } from "vue";
+import { tr } from "element-plus/es/locale";
 const outBluepr = new Set<string>();
 let config: config;
 const buildingIcons = ref<any>([]);
-onMounted(()=>{
+onMounted(() => {
 	config = getConfigPath() as config;
-	MapData.getInstance().getDataforLong(config.stagingPath+"\\主文件.json");
+	MapData.getInstance().getDataforLong(config.stagingPath + "\\主文件.json");
 })
 /**
  * 初始化蓝图
  */
 const populateSpawnData = async () => {
 	MapPool._clear();
+	MapData.getInstance().clearData();
 	let rootPath = config.rootPath; // 网页测试
 	let test = getAllFiles(rootPath);
 	let inputData = await readFiles(test); // inputData 是一个 Map 对象
@@ -72,15 +74,21 @@ const simpleFilter = function () {
 	outBluepr.clear();
 	const data = MapData.getInstance().testData;
 	const seleceData = SeleceManag.getInstance().seleceIconArr;
-	const excludeData  = SeleceManag.getInstance().excludeIconArr;
+	const excludeData = SeleceManag.getInstance().excludeIconArr;
 	console.log(MapPool.pool);
 	data.forEach((element, index) => {
 		const counter = MapPool._findFoOutPool(index, element.outPath);
+		console
 		if (counter) {
-			let hasOverlap = seleceData.every(value => counter.has(value));
-			let hasNoExclude = !excludeData.length || excludeData.some(value => !counter.has(value));
+			let hasOverlap = false;
+			let hasNoExclude = true;
+			if (seleceData.length)
+				hasOverlap = seleceData.every(value => counter.has(value));
+			if (excludeData.length)
+				hasNoExclude = !excludeData.some(value => counter.has(value));
+
 			console.log(hasOverlap, hasNoExclude);
-			if (hasOverlap&&hasNoExclude) {
+			if (hasOverlap && hasNoExclude) {
 				outBluepr.add(index);
 			}
 		}
@@ -99,8 +107,8 @@ const exportFilterBluepr = function () {
 const clearData = function () {
 	SeleceManag.getInstance().clear();
 	buildingIcons.value.forEach((icon: { clearSelection: () => void; }) => {
-        icon.clearSelection() // 调用子组件的方法
-      })
+		icon.clearSelection() // 调用子组件的方法
+	})
 }
 /**
  * 计算蓝图中每种建筑的数量
