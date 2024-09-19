@@ -3,17 +3,17 @@
 		<el-button @click="populateSpawnData" type="primary">初始化蓝图</el-button>
 		<el-button @click="simpleFilter" type="primary">筛选蓝图</el-button>
 		<el-button @click="exportFilterBluepr" type="success">导出筛选的蓝图</el-button>
-		<el-button @click="clearData" type="warning">清空选择数据</el-button>
-		<el-button type="danger">Danger</el-button>
+		<el-button  @click="clearData" type="warning">清空选择数据</el-button>
+		<!-- <el-button type="danger">Danger</el-button> -->
 	</div>
 	<el-divider>
 		<span>包含</span>
 	</el-divider>
-	<BuildingIcon v-for="item in items" :key="item.id" :item="item" :isHave=true />
+	<BuildingIcon ref="buildingIcons"  v-for="item in items" :key="item.id" :item="item" :isHave=true />
 	<el-divider>
 		<span>不包含</span>
 	</el-divider>
-	<BuildingIcon v-for="item in items" :key="item.id" :item="item" :isHave=false />
+	<BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=false />
 	<el-button :plain="true" @click="open2">Success</el-button>
 </template>
 
@@ -29,10 +29,10 @@ import BuildingIcon from "./components/BuildingIcon.vue";
 import { SeleceManag } from "@/MyIns/SeleceManag";
 import { ElMessage } from "element-plus";
 import { MapPool } from "@/Toop/MapPool";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 const outBluepr = new Set<string>();
 let config: config;
-
+const buildingIcons = ref<any>([]);
 onMounted(()=>{
 	config = getConfigPath() as config;
 	MapData.getInstance().getDataforLong(config.stagingPath+"\\主文件.json");
@@ -98,6 +98,9 @@ const exportFilterBluepr = function () {
 }
 const clearData = function () {
 	SeleceManag.getInstance().clear();
+	buildingIcons.value.forEach((icon: { clearSelection: () => void; }) => {
+        icon.clearSelection() // 调用子组件的方法
+      })
 }
 /**
  * 计算蓝图中每种建筑的数量

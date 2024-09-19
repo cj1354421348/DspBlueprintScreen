@@ -45,6 +45,11 @@ const toggleSelection = () => {
     console.log(SeleceManag.getInstance().excludeIconArr);
   }
 };
+const clearSelection = () => {
+  //console.log("clearSelection");
+  isSelected.value = false;
+}
+defineExpose({ clearSelection })
 // onMounted(() => {
 //   isSelected.value =SeleceManag.getInstance().haveSeleceIcon(props.item.id);
 // });
