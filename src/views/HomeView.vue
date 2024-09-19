@@ -7,6 +7,11 @@
 		<!-- <el-button type="danger">Danger</el-button> -->
 	</div>
 	<el-divider>
+		<span>限制建筑数量0为不限制</span>
+	</el-divider>
+	<el-input-number v-model="buildNum" :step="300" :min="0" :max="99999" clearable />
+  <div style="margin: 20px 0" />
+	<el-divider>
 		<span>包含</span>
 	</el-divider>
 	<BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=true />
@@ -30,10 +35,10 @@ import { SeleceManag } from "@/MyIns/SeleceManag";
 import { ElMessage } from "element-plus";
 import { MapPool } from "@/Toop/MapPool";
 import { onMounted, ref } from "vue";
-import { tr } from "element-plus/es/locale";
 const outBluepr = new Set<string>();
 let config: config;
 const buildingIcons = ref<any>([]);
+const buildNum = ref(0);
 onMounted(() => {
 	config = getConfigPath() as config;
 	MapData.getInstance().getDataforLong(config.stagingPath + "\\主文件.json");
@@ -54,6 +59,8 @@ const populateSpawnData = async () => {
 			blueprintData = fromStr(element.data);
 			let okData = buildingCounter(blueprintData, index);
 			let outUrl = await createDir(index, okData);
+
+			console.log(blueprintData.buildings.length);
 			let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc, index, element.filePath, outUrl);
 			MapData.getInstance().setData(index, oneBlueprintData);
 		} catch (e) {
@@ -82,13 +89,19 @@ const simpleFilter = function () {
 		if (counter) {
 			let hasOverlap = false;
 			let hasNoExclude = true;
+			let isMax = true;
 			if (seleceData.length)
 				hasOverlap = seleceData.every(value => counter.has(value));
 			if (excludeData.length)
 				hasNoExclude = !excludeData.some(value => counter.has(value));
 
+			if(buildNum.value&&counter.has(-1)){
+				// eslint-disable-next-line 
+				console.log(counter.get(-1),buildNum.value);
+				isMax = counter.get(-1) as number<=buildNum.value;
+			}
 			console.log(hasOverlap, hasNoExclude);
-			if (hasOverlap && hasNoExclude) {
+			if (hasOverlap && hasNoExclude && isMax) {
 				outBluepr.add(index);
 			}
 		}
@@ -121,6 +134,7 @@ const buildingCounter = function (data: BlueprintData, mapKey: string) {
 		if (b.recipeId == 0)
 			continue;
 		const count = recipeIconId2(b.recipeId);
+		counter.set(-1,data.buildings.length);
 		count.forEach(c => {
 			counter.set(c.item.id, (counter.get(c.item.id) ?? 0) + 1);
 		});

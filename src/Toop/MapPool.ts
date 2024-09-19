@@ -8,10 +8,9 @@ export class MapPool {
   /**
    * 私有静态变量，用于存储 Map 对象
    * @private
-   * @type {Map<string, Map<any, any>>}
+   * @type {Map<string, Map<any, any>>} //里面map的key为-1时代表蓝图的建筑数量
    */
-  public static pool: Map<string, Map<any, any>> = new Map();
-
+  public static pool: Map<string, Map<any, any>> = new Map(); 
   /**
    * 获取一个 Map 对象
    * 如果对象池中有可用的 Map 对象，则从对象池中取出一个
