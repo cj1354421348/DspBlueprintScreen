@@ -59,11 +59,11 @@ export class MapPool {
   public static _find<K, V>(key: string): Map<K, V> | undefined {
     return MapPool.pool.get(key);
   }
-  public static _findFoOutPool(key: string,outPath:string):Map<number,number>{
-    if(this.pool.has(key)) return this.pool.get(key)!;
+  public static async _findFoOutPool(key: string, outPath: string): Promise<Map<number, number>> {
+    if (this.pool.has(key)) return this.pool.get(key)!;
     console.log("从文件中读取数据");
-    let outMap = readJsonFile(outPath);
-    let map = this._get<number,number>(key);
+    const outMap = await readJsonFile(outPath);
+    const map = this._get<number, number>(key);
     for (const key in outMap) {
       if (Object.prototype.hasOwnProperty.call(outMap, key)) {
         map?.set(Number(key), outMap[key]);

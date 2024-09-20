@@ -5,7 +5,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { getConfigPath } from './Read';
-const config:config = getConfigPath() as config;
+const config: config = getConfigPath() as config;
 /**
  *  保存Map类型文件到系统
  * @param fileName 
@@ -44,15 +44,20 @@ export function createDir(fileName: string, content: Map<any, any>): Promise<str
  */
 export function copyFile(src: string, dest: string): Promise<void> {
     const destPath = path.join(dest, path.basename(src));
+    // 如果目标文件夹不存在，则创建它
+    const dirPath = path.dirname(destPath);
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
     return new Promise((resolve, reject) => {
-      fs.copyFile(src, destPath, (err) => {
-        if (err) {
-          console.error('拷贝文件时出错:', err);
-          reject(err);
-          return;
-        }
-        resolve();
-      });
+        fs.copyFile(src, destPath, (err) => {
+            if (err) {
+                console.error('拷贝文件时出错:', err);
+                reject(err);
+                return;
+            }
+            resolve();
+        });
     });
 }
 
