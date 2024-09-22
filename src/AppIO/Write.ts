@@ -43,21 +43,32 @@ export function createDir(fileName: string, content: Map<any, any>): Promise<str
  * @returns 
  */
 export function copyFile(src: string, dest: string): Promise<void> {
-    const destPath = path.join(dest, path.basename(src));
-    // 如果目标文件夹不存在，则创建它
-    const dirPath = path.dirname(destPath);
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
-    }
     return new Promise((resolve, reject) => {
-        fs.copyFile(src, destPath, (err) => {
-            if (err) {
-                console.error('拷贝文件时出错:', err);
-                reject(err);
-                return;
+        try {
+            const destPath = path.join(dest, path.basename(src));
+
+            // 如果目标文件夹不存在，则创建它
+            const dirPath = path.dirname(destPath);
+            if (!fs.existsSync(dirPath)) {
+                fs.mkdirSync(dirPath, { recursive: true });
             }
-            resolve();
-        });
+
+            let finalDestPath = destPath;
+            let counter = 1;
+            // 如果目标文件存在，添加编号来避免覆盖
+            while (fs.existsSync(finalDestPath)) {
+                const parsedPath = path.parse(destPath);
+                finalDestPath = path.join(parsedPath.dir, `${parsedPath.name}(${counter})${parsedPath.ext}`);
+                counter++;
+            }
+            // 同步执行文件复制
+            fs.copyFileSync(src, finalDestPath);
+            resolve(); // 成功时调用 resolve
+        } catch (err) {
+            console.error('拷贝文件时出错:', err);
+            reject(err); // 出错时调用 reject
+        }
     });
 }
+
 

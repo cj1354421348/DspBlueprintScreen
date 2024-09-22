@@ -37,6 +37,7 @@ import { MapPool } from "@/Toop/MapPool";
 import { onMounted, ref } from "vue";
 import { ElLoading } from 'element-plus'
 import { Tipsessage } from "@/Toop/Tips";
+import { BuilToop } from "@/Toop/BuilToop";
 const outBluepr = new Set<string>();
 let config: config;
 const buildingIcons = ref<any>([]);
@@ -56,7 +57,7 @@ onMounted(() => {
     const loading = ElLoading.service(options.value); 
     MapPool._clear(); 
     MapData.getInstance().clearData(); 
- 
+    clearData();
     let rootPath = config.rootPath; // 网页测试 
     let test = getAllFiles(rootPath); 
     let inputData = await readFiles(test); // inputData 是一个 Map 对象 
@@ -69,6 +70,7 @@ onMounted(() => {
             blueprintData = fromStr(element.data); 
             let okData = buildingCounter(blueprintData, index); 
             let outUrl = await createDir(index, okData); 
+            //console.log(JSON.stringify(blueprintData));
             let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc, index, element.filePath, outUrl); 
             MapData.getInstance().setData(index, oneBlueprintData); 
         } catch (e) { 
@@ -183,6 +185,7 @@ const clearData = function () {
 const buildingCounter = function (data: BlueprintData, mapKey: string) {
 	const counter = MapPool._get<number, number>(mapKey);
 	for (const b of data.buildings) {
+        BuilToop.changeRecipeId(b);//特殊处理不需要设置配方的建筑
 		if (b.recipeId == 0)
 			continue;
 		const count = recipeIconId2(b.recipeId);
