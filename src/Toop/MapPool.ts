@@ -1,5 +1,5 @@
 import { readJsonFile } from "@/AppIO/Read";
-
+import { newitemData } from "@/DataType/tiemData";
 /**
  * 该类实现了一个 Map 对象池，用于重用 Map 对象
  * @class MapPool
@@ -8,19 +8,19 @@ export class MapPool {
   /**
    * 私有静态变量，用于存储 Map 对象
    * @private
-   * @type {Map<string, Map<any, any>>} //里面map的key为-1时代表蓝图的建筑数量
+   * @type {Map<string, tiemData>} //里面map的key为-1时代表蓝图的建筑数量
    */
-  public static pool: Map<string, Map<any, any>> = new Map(); 
+  public static pool: Map<string, newitemData> = new Map(); 
   /**
    * 获取一个 Map 对象
    * 如果对象池中有可用的 Map 对象，则从对象池中取出一个
    * 否则，创建一个新的 Map 对象
-   * @returns {Map<K, V>}
+   * @returns newtiemData
    */
-  public static _get<K, V>(key: string): Map<K, V> {
+  public static _get(key: string): newitemData {
     let map = MapPool.pool.get(key);
     if (!map) {
-      map = new Map<K, V>();
+      map = new newitemData();
       MapPool.pool.set(key, map);
     }
     return map;
@@ -29,10 +29,9 @@ export class MapPool {
   /**
    * 将 Map 对象放回对象池中
    * 如果对象池中已经有 10 个 Map 对象，则不再放回
-   * @param {string} key
-   * @param {Map<K, V>} map
+   * 
    */
-  public static _release<K, V>(key: string, map: Map<K, V>) {
+  public static _release(key: string, map:newitemData) {
     this.pool.clear();
     if (MapPool.pool.size < 10) {
       MapPool.pool.set(key, map);
@@ -54,21 +53,24 @@ export class MapPool {
    * 
    * 根据 key 查找 Map 对象
    * @param {string} key
-   * @returns {Map<K, V>}
    */
-  public static _find<K, V>(key: string): Map<K, V> | undefined {
+  public static _find<K, V>(key: string): newitemData | undefined {
     return MapPool.pool.get(key);
   }
-  public static async _findFoOutPool(key: string, outPath: string): Promise<Map<number, number>> {
+  public static async _findFoOutPool(key: string, outPath: string): Promise<newitemData> {
     if (this.pool.has(key)) return this.pool.get(key)!;
     console.log("从文件中读取数据");
     const outMap = await readJsonFile(outPath);
-    const map = this._get<number, number>(key);
-    for (const key in outMap) {
-      if (Object.prototype.hasOwnProperty.call(outMap, key)) {
-        map?.set(Number(key), outMap[key]);
-      }
-    }
+    const map = this._get(key);
+    map.longItem = outMap.longItem;
+    map.typtItem = new Map(Object.entries(outMap.typtItem).map(([key, value]) => [Number(key), value as number]));
+    map.numItem = new Map(Object.entries(outMap.numItem).map(([key, value]) => [Number(key), value as number]));
+    // for (const key in outMap) {
+    //   if (Object.prototype.hasOwnProperty.call(outMap, key)) {
+    //     console.log(outMap, key);
+    //     //map?.set(Number(key), outMap[key]);
+    //   }
+    // }
     return map;
   }
 }

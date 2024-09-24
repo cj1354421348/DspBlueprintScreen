@@ -1,10 +1,6 @@
 <template>
-  <div
-    class="icon"
-    :class="{ 'has-count': props.item.count !== undefined, selected: isSelected }"
-    :title="props.item.alt"
-    @click="toggleSelection"
-  >
+  <div class="icon" :class="{ 'has-count': props.item.count !== undefined, selected: isSelected }" :title="props.item.alt"
+    @click="toggleSelection">
     <img :src="src" :alt="props.item.alt" />
     <div v-if="props.item.count !== undefined" class="count">
       {{ props.item.count === 1 ? "" : props.item.count }}
@@ -17,6 +13,7 @@
 import { onMounted, ref, watchEffect } from "vue";
 import { iconUrl } from "@/data/icons";
 import { SeleceManag } from "@/MyIns/SeleceManag";
+import { iconType } from "@/DataType/typeEnum";
 const props = defineProps<{
   item: {
     id: number;
@@ -24,7 +21,7 @@ const props = defineProps<{
     alt?: string;
     count?: number;
   };
-  isHave: boolean;
+  isHave: number;
 }>();
 
 const src = ref("");
@@ -37,12 +34,21 @@ watchEffect(async () => {
 
 const toggleSelection = () => {
   isSelected.value = !isSelected.value;
-  if (props.isHave) {
-    SeleceManag.getInstance().setSeleceIcon(props.item.id, isSelected.value);
-    console.log(SeleceManag.getInstance().seleceIconArr);
-  } else {
-    SeleceManag.getInstance().setExcludeIcon(props.item.id, isSelected.value);
-    console.log(SeleceManag.getInstance().excludeIconArr);
+  switch (props.isHave) {
+    case iconType.haven:
+      SeleceManag.getInstance().setSeleceIcon(props.item.id, isSelected.value);
+      console.log(SeleceManag.getInstance().seleceIconArr);
+      break;
+    case iconType.unhaven:
+      SeleceManag.getInstance().setExcludeIcon(props.item.id, isSelected.value);
+      console.log(SeleceManag.getInstance().excludeIconArr);
+      break;
+    case iconType.itemId:
+    SeleceManag.getInstance().setContainBuild(props.item.id, isSelected.value);
+    console.log(SeleceManag.getInstance().containBuildArr);
+    default:
+      // 处理其他情况（如果有需要的话）
+      break;
   }
 };
 const clearSelection = () => {
@@ -90,7 +96,8 @@ defineExpose({ clearSelection })
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    font-size: 0.8em; /* 设置字体大小 */
+    font-size: 0.8em;
+    /* 设置字体大小 */
   }
 }
 </style>

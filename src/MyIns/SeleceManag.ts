@@ -20,15 +20,19 @@ export class SeleceManag extends BaseIns {
      */
     private excludeIcon = new Set<number>();
     /**
+     * 包含的建筑物id
+     */
+    private containBuild = new Set<number>();
+    /**
      * 设置选择的图标id
      * @param icon 图标id
      * @param include 是否选择
      */
     public setSeleceIcon(icon: number, include: boolean) {
         if (include) {
-        this.seleceIcon.add(icon);
+            this.seleceIcon.add(icon);
         } else {
-        this.seleceIcon.delete(icon);
+            this.seleceIcon.delete(icon);
         }
     }
     /**
@@ -38,9 +42,19 @@ export class SeleceManag extends BaseIns {
      */
     public setExcludeIcon(icon: number, include: boolean) {
         if (include) {
-        this.excludeIcon.add(icon);
+            this.excludeIcon.add(icon);
         } else {
-        this.excludeIcon.delete(icon);
+            this.excludeIcon.delete(icon);
+        }
+    }
+    /**
+     * 设置包含的建筑物id
+     */
+    public setContainBuild(build: number, include: boolean) {
+        if (include) {
+            this.containBuild.add(build);
+        } else {
+            this.containBuild.delete(build);
         }
     }
     /**
@@ -55,7 +69,12 @@ export class SeleceManag extends BaseIns {
     public get excludeIconArr(): number[] {
         return Array.from(this.excludeIcon);
     }
-
+    /**
+     * 获取设置建筑物id数组
+     */
+    public get containBuildArr(): number[] {
+        return Array.from(this.containBuild);
+    }
     /**
      * 是否包含选择的图标
      * @param icon 图标id
@@ -73,9 +92,19 @@ export class SeleceManag extends BaseIns {
     public haveExcludeIcon(icon: number): boolean {
         return this.excludeIcon.has(icon);
     }
+
+    /**
+     * 是否包含包含的建筑物
+     * @param build 建筑物id
+     * @returns 是否包含包含的建筑物
+     */
+    public haveContainBuild(build: number): boolean {
+        return this.containBuild.has(build);
+    }
     public clear() {
         this.seleceIcon.clear();
         this.excludeIcon.clear();
+        this.containBuild.clear();
     }
 
 }

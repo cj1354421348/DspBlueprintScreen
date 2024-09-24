@@ -5,6 +5,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { getConfigPath } from './Read';
+import { newitemData } from '@/DataType/tiemData';
 const config: config = getConfigPath() as config;
 /**
  *  保存Map类型文件到系统
@@ -70,5 +71,31 @@ export function copyFile(src: string, dest: string): Promise<void> {
         }
     });
 }
-
+export function itemDataToJson(fileName: string, content: newitemData): Promise<string> {
+    const dirPath = config.stagingPath;
+    return new Promise((resolve, reject) => {
+        fs.mkdir(dirPath, { recursive: true }, (err) => {
+            if (err) {
+                console.error('创建目录时出错:', err);
+                reject(err);
+                return;
+            }
+            // 写入文件
+            const filePath = path.join(dirPath, fileName + '.json');
+            const dataToSave = {
+                longItem: content.longItem,
+                typtItem: Object.fromEntries(content.typtItem),
+                numItem: Object.fromEntries(content.numItem)
+            };
+            fs.writeFile(filePath, JSON.stringify(dataToSave, null, 2), 'utf8', (err) => {
+                if (err) {
+                    console.error('写入文件时出错:', err);
+                    reject(err);
+                    return;
+                }
+                resolve(filePath);
+            });
+        });
+    });
+};
 

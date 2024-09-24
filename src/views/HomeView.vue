@@ -20,7 +20,7 @@
                 </el-divider>
             </template>
             <div>
-                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=true />
+                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=iconType.haven />
             </div>
         </el-collapse-item>
         <el-collapse-item>
@@ -30,7 +30,19 @@
                 </el-divider>
             </template>
             <div>
-                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=false />
+                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=iconType.unhaven />
+            </div>
+        </el-collapse-item>
+
+
+        <el-collapse-item>
+            <template #title>
+                <el-divider border-style="none">
+                    <el-text class="mx-1" type="warning">铺设的建筑物</el-text>
+                </el-divider>
+            </template>
+            <div>
+                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=iconType.itemId />
             </div>
         </el-collapse-item>
     </el-collapse>
@@ -49,7 +61,7 @@ import { BlueprintData, fromStr } from "@/blueprint/parser";
 import { getAllFiles, getConfigPath, getExePath, readFiles, readJsonFile } from "@/AppIO/Read";
 import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
-import { copyFile, createDir } from "@/AppIO/Write";
+import { copyFile, createDir, itemDataToJson } from "@/AppIO/Write";
 import { items } from "@/data/itemsData";
 import { recipeIconId2 } from "@/data/icons";
 import BuildingIcon from "./components/BuildingIcon.vue";
@@ -60,6 +72,7 @@ import { onMounted, ref } from "vue";
 import { ElLoading } from 'element-plus'
 import { Tipsessage } from "@/Toop/Tips";
 import { BuilToop } from "@/Toop/BuilToop";
+import {iconType} from "@/DataType/typeEnum";
 const outBluepr = new Set<string>();
 let config: config;
 const buildingIcons = ref<any>([]);
@@ -91,7 +104,7 @@ const populateSpawnData = async () => {
         try {
             blueprintData = fromStr(element.data);
             let okData = buildingCounter(blueprintData, index);
-            let outUrl = await createDir(index, okData);
+            let outUrl = await itemDataToJson(index, okData);
             //console.log(JSON.stringify(blueprintData));
             let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc, index, element.filePath, outUrl);
             MapData.getInstance().setData(index, oneBlueprintData);
@@ -128,6 +141,7 @@ const simpleFilter = async function () {
     const data = MapData.getInstance().testData;
     const seleceData = SeleceManag.getInstance().seleceIconArr;
     const excludeData = SeleceManag.getInstance().excludeIconArr;
+    const itemIdData = SeleceManag.getInstance().containBuildArr;
     console.log(MapPool.pool);
     // 使用 for...of 循环，配合 setImmediate 分解任务
     for (const [index, element] of data.entries()) {
@@ -137,22 +151,24 @@ const simpleFilter = async function () {
                 try {
                     const counter = await MapPool._findFoOutPool(index, element.outPath);
                     if (counter) {
-                        let hasOverlap = false;
+                        let hasOverlap = true;
                         let hasNoExclude = true;
                         let isMax = true;
-
+                        let hasitemId = true;
                         if (seleceData.length)
-                            hasOverlap = seleceData.every(value => counter.has(value));
+                            hasOverlap = seleceData.every(value => counter.typtItem.has(value));
 
                         if (excludeData.length)
-                            hasNoExclude = !excludeData.some(value => counter.has(value));
+                            hasNoExclude = !excludeData.some(value => counter.typtItem.has(value));
 
-                        if (buildNum.value && counter.has(-1)) {
-                            console.log(counter.get(-1), buildNum.value);
-                            isMax = (counter.get(-1) as number) <= buildNum.value;
+                        if (buildNum.value && counter.longItem) {
+                            console.log(counter.longItem, buildNum.value);
+                            isMax = (counter.longItem as number) <= buildNum.value;
                         }
-                        console.log(hasOverlap, hasNoExclude);
-                        if (hasOverlap && hasNoExclude && isMax) {
+                        if(itemIdData.length)
+                            hasitemId = itemIdData.every(value => counter.numItem.has(value));
+                        console.log(hasOverlap, hasNoExclude,hasitemId);
+                        if (hasOverlap && hasNoExclude && isMax&&hasitemId) {
                             outBluepr.add(index);
                         }
                     }
@@ -168,6 +184,7 @@ const simpleFilter = async function () {
     // 所有数据处理完成后，关闭 loading
     loading.close();
     Tipsessage("筛选完成:" + outBluepr.size);
+    console.log(MapPool.pool);
 };
 
 
@@ -205,16 +222,18 @@ const clearData = function () {
  * @returns 
  */
 const buildingCounter = function (data: BlueprintData, mapKey: string) {
-    const counter = MapPool._get<number, number>(mapKey);
+    const counter = MapPool._get(mapKey);
     for (const b of data.buildings) {
+        counter.numItem.set(b.itemId, (counter.numItem.get(b.itemId) ?? 0) + 1);
         BuilToop.changeRecipeId(b);//特殊处理不需要设置配方的建筑
         if (b.recipeId == 0)
             continue;
         const count = recipeIconId2(b.recipeId);
-        counter.set(-1, data.buildings.length);
-        count.forEach(c => {
-            counter.set(c.item.id, (counter.get(c.item.id) ?? 0) + 1);
+        counter.longItem =  data.buildings.length;
+        count.forEach(c => {//每个的配方
+            counter.typtItem.set(c.item.id, (counter.typtItem.get(c.item.id) ?? 0) + 1);
         });
+
     }
     return counter;
 }
