@@ -1,64 +1,87 @@
 <template>
-    <div class="mb-4">
-        <el-button @click="populateSpawnData" type="primary">初始化蓝图</el-button>
-        <el-button @click="simpleFilter" type="primary">筛选蓝图</el-button>
-        <el-button @click="exportFilterBluepr" type="success">导出筛选的蓝图</el-button>
-        <el-button @click="clearData" type="warning">清空选择数据</el-button>
-        <!-- <el-button type="danger">Danger</el-button> -->
-    </div>
-    <el-divider>
-        <span>限制建筑数量0为不限制</span>
-    </el-divider>
-    <el-input-number v-model="buildNum" :step="300" :min="0" :max="99999" clearable />
-    <div style="margin: 20px 0" />
+  <div class="mb-4">
+    <el-button @click="populateSpawnData" type="primary">初始化蓝图</el-button>
+    <el-button @click="simpleFilter" type="primary">筛选蓝图</el-button>
+    <el-button @click="exportFilterBluepr" type="success">导出筛选的蓝图</el-button>
+    <el-button @click="clearData" type="warning">清空选择数据</el-button>
+    <!-- <el-button type="danger">Danger</el-button> -->
+  </div>
+  <el-divider>
+    <span>限制建筑数量0为不限制</span>
+  </el-divider>
+  <el-input-number v-model="buildNum" :step="300" :min="0" :max="99999" clearable />
+  <div style="margin: 20px 0" />
 
-    <el-collapse>
-        <el-collapse-item>
-            <template #title>
-                <el-divider border-style="none">
-                    <el-text class="mx-1" type="success">包含</el-text>
-                </el-divider>
-            </template>
-            <div>
-                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=iconType.haven />
-            </div>
-        </el-collapse-item>
-        <el-collapse-item>
-            <template #title>
-                <el-divider border-style="none">
-                    <el-text class="mx-1" type="warning">不包含</el-text>
-                </el-divider>
-            </template>
-            <div>
-                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=iconType.unhaven />
-            </div>
-        </el-collapse-item>
+  <el-collapse>
+    <el-collapse-item>
+      <template #title>
+        <el-divider border-style="none">
+          <el-text class="mx-1" type="success">包含</el-text>
+        </el-divider>
+      </template>
+      <div>
+        <BuildingIcon
+          ref="buildingIcons"
+          v-for="item in items"
+          :key="item.id"
+          :item="item"
+          :isHave="iconType.haven"
+        />
+      </div>
+    </el-collapse-item>
+    <el-collapse-item>
+      <template #title>
+        <el-divider border-style="none">
+          <el-text class="mx-1" type="warning">不包含</el-text>
+        </el-divider>
+      </template>
+      <div>
+        <BuildingIcon
+          ref="buildingIcons"
+          v-for="item in items"
+          :key="item.id"
+          :item="item"
+          :isHave="iconType.unhaven"
+        />
+      </div>
+    </el-collapse-item>
 
-
-        <el-collapse-item>
-            <template #title>
-                <el-divider border-style="none">
-                    <el-text class="mx-1" type="warning">铺设的建筑物</el-text>
-                </el-divider>
-            </template>
-            <div>
-                <BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=iconType.itemId />
-            </div>
-        </el-collapse-item>
-    </el-collapse>
-    <!-- <el-divider>
+    <el-collapse-item>
+      <template #title>
+        <el-divider border-style="none">
+          <el-text class="mx-1" type="warning">铺设的建筑物</el-text>
+        </el-divider>
+      </template>
+      <div>
+        <BuildingIcon
+          ref="buildingIcons"
+          v-for="item in items"
+          :key="item.id"
+          :item="item"
+          :isHave="iconType.itemId"
+        />
+      </div>
+    </el-collapse-item>
+  </el-collapse>
+  <!-- <el-divider>
 		<span>包含</span>
 	</el-divider> -->
-    <!-- <el-divider>
+  <!-- <el-divider>
 		<span>不包含</span>
 	</el-divider>
 	<BuildingIcon ref="buildingIcons" v-for="item in items" :key="item.id" :item="item" :isHave=false /> -->
-    <!-- <el-button :plain="true" @click="open2">Success</el-button> -->
+  <!-- <el-button :plain="true" @click="open2">Success</el-button> -->
 </template>
 
 <script setup lang="ts">
 import { BlueprintData, fromStr } from "@/blueprint/parser";
-import { getAllFiles, getConfigPath, getExePath, readFiles, readJsonFile } from "@/AppIO/Read";
+import {
+  getAllFiles,
+  getConfigPath,
+  getExePath,
+  readFiles,
+  readJsonFile,
+} from "@/AppIO/Read";
 import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
 import { copyFile, createDir, itemDataToJson } from "@/AppIO/Write";
@@ -69,180 +92,184 @@ import { SeleceManag } from "@/MyIns/SeleceManag";
 import { ElMessage } from "element-plus";
 import { MapPool } from "@/Toop/MapPool";
 import { onMounted, ref } from "vue";
-import { ElLoading } from 'element-plus'
+import { ElLoading } from "element-plus";
 import { Tipsessage } from "@/Toop/Tips";
 import { BuilToop } from "@/Toop/BuilToop";
-import {iconType} from "@/DataType/typeEnum";
+import { iconType } from "@/DataType/typeEnum";
 const outBluepr = new Set<string>();
 let config: config;
 const buildingIcons = ref<any>([]);
 const buildNum = ref(0);
 const options = ref({
-    text: '',
-    background: 'rgba(0, 0, 0, 0.7)',
-})
+  text: "",
+  background: "rgba(0, 0, 0, 0.7)",
+});
 onMounted(() => {
-    config = getConfigPath() as config;
-    MapData.getInstance().getDataforLong(config.stagingPath + "\\主文件.json");
-})
+  config = getConfigPath() as config;
+  MapData.getInstance().getDataforLong(config.stagingPath + "\\主文件.json");
+});
 /**
  * 初始化蓝图
  */
 const populateSpawnData = async () => {
-    const loading = ElLoading.service(options.value);
-    MapPool._clear();
-    MapData.getInstance().clearData();
-    clearData();
-    let rootPath = config.rootPath; // 网页测试 
-    let test = getAllFiles(rootPath);
-    let inputData = await readFiles(test); // inputData 是一个 Map 对象 
+  const loading = ElLoading.service(options.value);
+  MapPool._clear();
+  MapData.getInstance().clearData();
+  clearData();
+  let rootPath = config.rootPath; // 网页测试
+  let test = getAllFiles(rootPath);
+  let inputData = await readFiles(test); // inputData 是一个 Map 对象
 
-    let blueprintData;
-    let processedCount = 1;
-    loading.setText(`${processedCount}/${inputData.size}`);
-    const processEntry = async ([index, element]: [string, { filePath: string, data: string }]) => {
-        try {
-            blueprintData = fromStr(element.data);
-            let okData = buildingCounter(blueprintData, index);
-            let outUrl = await itemDataToJson(index, okData);
-            //console.log(JSON.stringify(blueprintData));
-            let oneBlueprintData = new newBaseData(blueprintData.header.shortDesc, index, element.filePath, outUrl);
-            MapData.getInstance().setData(index, oneBlueprintData);
-        } catch (e) {
-            console.error("导入的蓝图数据有误", e);
-            return;
-        } finally {
-            processedCount++;
-            loading.setText(`${processedCount}/${inputData.size}`);
-        }
-    };
-    // 使用 setImmediate 分解任务
-    for (let entry of inputData.entries()) {
-        await new Promise<void>((resolve) => {
-            setImmediate(async () => {
-                await processEntry(entry);
-                resolve();
-            });
-        });
+  let blueprintData;
+  let processedCount = 1;
+  loading.setText(`${processedCount}/${inputData.size}`);
+  const processEntry = async ([index, element]: [
+    string,
+    { filePath: string; data: string }
+  ]) => {
+    try {
+      blueprintData = fromStr(element.data);
+      let okData = buildingCounter(blueprintData, index);
+      let outUrl = await itemDataToJson(index, okData);
+      //console.log(JSON.stringify(blueprintData));
+      let oneBlueprintData = new newBaseData(
+        blueprintData.header.shortDesc,
+        index,
+        element.filePath,
+        outUrl
+      );
+      MapData.getInstance().setData(index, oneBlueprintData);
+    } catch (e) {
+      console.error("导入的蓝图数据有误", e);
+      return;
+    } finally {
+      processedCount++;
+      loading.setText(`${processedCount}/${inputData.size}`);
     }
-    MapData.getInstance().saveData();
-    console.log(MapData.getInstance().testData);
-    Tipsessage("蓝图数据导入完成:" + MapData.getInstance().testData.size);
-    loading.close();
+  };
+  // 使用 setImmediate 分解任务
+  for (let entry of inputData.entries()) {
+    await new Promise<void>((resolve) => {
+      setImmediate(async () => {
+        await processEntry(entry);
+        resolve();
+      });
+    });
+  }
+  MapData.getInstance().saveData();
+  console.log(MapData.getInstance().testData);
+  Tipsessage("蓝图数据导入完成:" + MapData.getInstance().testData.size);
+  loading.close();
 };
-
-
 
 //筛选蓝图按钮
 const simpleFilter = async function () {
-    options.value.text = '筛选中...';
-    const loading = ElLoading.service(options.value);
-    outBluepr.clear();
-    const data = MapData.getInstance().testData;
-    const seleceData = SeleceManag.getInstance().seleceIconArr;
-    const excludeData = SeleceManag.getInstance().excludeIconArr;
-    const itemIdData = SeleceManag.getInstance().containBuildArr;
-    console.log(MapPool.pool);
-    // 使用 for...of 循环，配合 setImmediate 分解任务
-    for (const [index, element] of data.entries()) {
-        // 将每个处理操作推迟到事件循环的下一次迭代
-        await new Promise<void>((resolve) => {
-            setImmediate(async () => {
-                try {
-                    const counter = await MapPool._findFoOutPool(index, element.outPath);
-                    if (counter) {
-                        let hasOverlap = true;
-                        let hasNoExclude = true;
-                        let isMax = true;
-                        let hasitemId = true;
-                        if (seleceData.length)
-                            hasOverlap = seleceData.every(value => counter.typtItem.has(value));
+  options.value.text = "筛选中...";
+  const loading = ElLoading.service(options.value);
+  outBluepr.clear();
+  const data = MapData.getInstance().testData;
+  const seleceData = SeleceManag.getInstance().seleceIconArr;
+  const excludeData = SeleceManag.getInstance().excludeIconArr;
+  const itemIdData = SeleceManag.getInstance().containBuildArr;
+  console.log(MapPool.pool);
+  // 使用 for...of 循环，配合 setImmediate 分解任务
+  for (const [index, element] of data.entries()) {
+    // 将每个处理操作推迟到事件循环的下一次迭代
+    await new Promise<void>((resolve) => {
+      setImmediate(async () => {
+        try {
+          const counter = await MapPool._findFoOutPool(index, element.outPath);
+          if (counter) {
+            let hasOverlap = false;
+            let hasNoExclude = true;
+            let isMax = true;
+            let hasitemId = true;
+            if (seleceData.length)
+              hasOverlap = seleceData.every((value) => counter.typtItem.has(value));
 
-                        if (excludeData.length)
-                            hasNoExclude = !excludeData.some(value => counter.typtItem.has(value));
+            if (excludeData.length)
+              hasNoExclude = !excludeData.some((value) => counter.typtItem.has(value));
 
-                        if (buildNum.value && counter.longItem) {
-                            console.log(counter.longItem, buildNum.value);
-                            isMax = (counter.longItem as number) <= buildNum.value;
-                        }
-                        if(itemIdData.length)
-                            hasitemId = itemIdData.every(value => counter.numItem.has(value));
-                        console.log(hasOverlap, hasNoExclude,hasitemId);
-                        if (hasOverlap && hasNoExclude && isMax&&hasitemId) {
-                            outBluepr.add(index);
-                        }
-                    }
-                } catch (error) {
-                    console.error(`Error processing element at index ${index}:`, error);
-                } finally {
-                    // 任务完成后解除 Promise 挂起
-                    resolve();
-                }
-            });
-        });
-    }
-    // 所有数据处理完成后，关闭 loading
-    loading.close();
-    Tipsessage("筛选完成:" + outBluepr.size);
-    console.log(MapPool.pool);
+            if (buildNum.value && counter.longItem) {
+              console.log(counter.longItem, buildNum.value);
+              isMax = (counter.longItem as number) <= buildNum.value;
+            }
+            if (itemIdData.length)
+              hasitemId = itemIdData.every((value) => counter.numItem.has(value));
+            console.log(hasOverlap, hasNoExclude, hasitemId);
+            let test = (!seleceData.length && itemIdData.length)||hasOverlap;
+            if (test && (hasNoExclude && isMax && hasitemId)) {
+              outBluepr.add(index);
+            }
+          }
+        } catch (error) {
+          console.error(`Error processing element at index ${index}:`, error);
+        } finally {
+          // 任务完成后解除 Promise 挂起
+          resolve();
+        }
+      });
+    });
+  }
+  // 所有数据处理完成后，关闭 loading
+  loading.close();
+  Tipsessage("筛选完成:" + outBluepr.size);
+  console.log(MapPool.pool);
 };
-
-
 
 //导出筛选蓝图
 const exportFilterBluepr = async function () {
-    options.value.text = '导出中...';
-    const loading = ElLoading.service(options.value)
-    console.log(outBluepr);
-    // 用于存储所有的 Promise
-    const promises: Promise<void>[] = [];
-    // 遍历 outBluepr 集合
-    outBluepr.forEach(index => {
-        const data = MapData.getInstance().testData.get(index);
-        if (data) {
-            // 将每个 copyFile 调用返回的 Promise 存储到 promises 数组中
-            const promise = copyFile(data.path, config.outputPath);
-            promises.push(promise);
-        }
-    });
-    // 等待所有的拷贝操作完成
-    await Promise.all(promises);
-    loading.close();
+  options.value.text = "导出中...";
+  const loading = ElLoading.service(options.value);
+  console.log(outBluepr);
+  // 用于存储所有的 Promise
+  const promises: Promise<void>[] = [];
+  // 遍历 outBluepr 集合
+  outBluepr.forEach((index) => {
+    const data = MapData.getInstance().testData.get(index);
+    if (data) {
+      // 将每个 copyFile 调用返回的 Promise 存储到 promises 数组中
+      const promise = copyFile(data.path, config.outputPath);
+      promises.push(promise);
+    }
+  });
+  // 等待所有的拷贝操作完成
+  await Promise.all(promises);
+  loading.close();
 };
 
 const clearData = function () {
-    SeleceManag.getInstance().clear();
-    buildingIcons.value.forEach((icon: { clearSelection: () => void; }) => {
-        icon.clearSelection() // 调用子组件的方法
-    })
-}
+  SeleceManag.getInstance().clear();
+  buildingIcons.value.forEach((icon: { clearSelection: () => void }) => {
+    icon.clearSelection(); // 调用子组件的方法
+  });
+};
 /**
  * 计算蓝图中每种建筑的数量
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
 const buildingCounter = function (data: BlueprintData, mapKey: string) {
-    const counter = MapPool._get(mapKey);
-    for (const b of data.buildings) {
-        counter.numItem.set(b.itemId, (counter.numItem.get(b.itemId) ?? 0) + 1);
-        BuilToop.changeRecipeId(b);//特殊处理不需要设置配方的建筑
-        if (b.recipeId == 0)
-            continue;
-        const count = recipeIconId2(b.recipeId);
-        counter.longItem =  data.buildings.length;
-        count.forEach(c => {//每个的配方
-            counter.typtItem.set(c.item.id, (counter.typtItem.get(c.item.id) ?? 0) + 1);
-        });
-
-    }
-    return counter;
-}
+  const counter = MapPool._get(mapKey);
+  for (const b of data.buildings) {
+    counter.numItem.set(b.itemId, (counter.numItem.get(b.itemId) ?? 0) + 1);
+    BuilToop.changeRecipeId(b); //特殊处理不需要设置配方的建筑
+    if (b.recipeId == 0) continue;
+    const count = recipeIconId2(b.recipeId);
+    counter.longItem = data.buildings.length;
+    count.forEach((c) => {
+      //每个的配方
+      counter.typtItem.set(c.item.id, (counter.typtItem.get(c.item.id) ?? 0) + 1);
+    });
+  }
+  return counter;
+};
 const open2 = () => {
-    let aaa = getExePath();
-    ElMessage({
-        showClose: true,
-        message: aaa,
-        type: 'success',
-    })
-}
+  let aaa = getExePath();
+  ElMessage({
+    showClose: true,
+    message: aaa,
+    type: "success",
+  });
+};
 </script>
