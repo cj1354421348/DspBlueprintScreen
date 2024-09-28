@@ -16,7 +16,7 @@ async function createWindow() {
     width: 1920,
     height: 1080,
     webPreferences: {
-      
+      devTools: !app.isPackaged, // 禁用开发者工具
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
@@ -25,7 +25,13 @@ async function createWindow() {
       enableRemoteModule: true,   // 允許在 Render Process 使用 Remote Module
     },
   })
-
+  // 禁用菜单栏中的开发者工具选项
+  // win.removeMenu();
+  // win.webContents.on('before-input-event', (event, input) => {
+  //   if (input.key === 'F12' || (input.control && input.shift && input.key === 'I')) {
+  //     event.preventDefault()
+  //   }
+  // })
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
