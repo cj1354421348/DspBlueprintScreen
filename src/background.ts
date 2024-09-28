@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import { Menu } from 'electron'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -12,9 +13,11 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   // Create the browser window.
+  Menu.setApplicationMenu(null) // null值取消顶部菜单栏
   const win = new BrowserWindow({
     width: 1920,
     height: 1080,
+    //autoHideMenuBar: true,
     webPreferences: {
       devTools: !app.isPackaged, // 禁用开发者工具
       // Use pluginOptions.nodeIntegration, leave this alone
