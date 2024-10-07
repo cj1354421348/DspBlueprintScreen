@@ -1,6 +1,7 @@
 const electron = window.require && window.require('electron');
 const path = require('path');
 const fs = require('fs');
+import { TipError } from '@/Toop/Tips';
 import * as crypto from 'crypto';
 /**
  * 读取蓝图文件路径
@@ -9,7 +10,10 @@ import * as crypto from 'crypto';
  */
 export function getAllFiles(dirPath: string) {
   let results: any[] = [];
-
+  if (!fs.existsSync(dirPath)) {
+    TipError("没有这样的目录");
+    return results; // 返回空数组
+  }
   // 读取目录中的所有文件和子目录
   const list = fs.readdirSync(dirPath);
 
