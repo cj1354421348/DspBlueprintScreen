@@ -1,24 +1,32 @@
-# 环境
-```
- node 16.20.2 
-```
-## Project setup
-```
-yarn install
-```
+# DspBlueprintScreen
 
-### Compiles and hot-reloads for development
-```
-yarn electron:serve
-```
+本应用是一款用于《戴森球计划》蓝图的本地筛选和管理工具。
 
-### Compiles and minifies for production
-```
+## 如何运行
+
+本项目需要 **Node.js v16** 环境。
+
+1.  **设置环境**
+    ```bash
+    nvm use
+    ```
+
+2.  **安装依赖**
+    ```bash
+    yarn install
+    ```
+
+3.  **启动应用**
+    ```bash
+    yarn electron:serve
+    ```
+
+## 配置
+
+应用的路径配置在 `config.json` 文件中，您可以根据需要进行修改。
+
+## 打包应用
+
+```bash
 yarn electron:build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-### 蓝图解析参考
-https://github.com/huww98/dsp_blueprint_editor

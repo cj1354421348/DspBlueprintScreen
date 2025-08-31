@@ -98,14 +98,65 @@ export function getSystem() {
 * @returns 获取配置文件路径
 */
 export function getConfigPath() {
+  const isDev = !electron.remote.app.isPackaged;
+  let appRoot: string;
 
-  if (!electron.remote.app.isPackaged)
-    return readConfigFile("D:\\project\\dsp_blueprint_screen\\config.json");
-  if (getSystem() === 1) {
-    return readConfigFile(getExePath() + "/config.json");
+  if (isDev) {
+    // In dev mode, getAppPath() can point to an intermediate dir (like dist_electron),
+    // so we adjust the path to point to the actual project root.
+    appRoot = path.join(electron.remote.app.getAppPath(), '..');
   } else {
-    return readConfigFile(getExePath() + "\\config.json");
+    // In production, the config file is placed next to the executable.
+    appRoot = path.dirname(electron.remote.app.getPath("exe"));
   }
+
+  const configFilePath = path.join(appRoot, 'config.json');
+  const config = readConfigFile(configFilePath);
+
+  if (config) {
+    const fallbacks = {
+      rootPath: './aaa',
+      stagingPath: './bbb',
+      outputPath: './ccc'
+    };
+
+    const sanitizePath = (key: keyof typeof fallbacks) => {
+      const userPath = config[key];
+      const safeFallbackDir = electron.remote.app.getPath('userData');
+      let finalPath: string;
+
+      if (userPath) {
+        // Resolve the user path relative to the app root to handle both absolute and relative paths correctly.
+        const resolvedPath = path.resolve(appRoot, userPath);
+        const pathRoot = path.parse(resolvedPath).root;
+        
+        if (fs.existsSync(pathRoot)) {
+          finalPath = resolvedPath;
+        } else {
+          console.warn(`Path for ${key} ("${userPath}") is invalid. Falling back to default user data directory.`);
+          finalPath = path.join(safeFallbackDir, fallbacks[key]);
+        }
+      } else {
+        finalPath = path.join(safeFallbackDir, fallbacks[key]);
+      }
+      
+      if (!fs.existsSync(finalPath)) {
+        try {
+          fs.mkdirSync(finalPath, { recursive: true });
+        } catch (e) {
+          console.error(`Failed to create directory ${finalPath} for ${key}`);
+          TipError(`创建目录 ${key} 失败`);
+        }
+      }
+      config[key] = finalPath;
+    };
+
+    sanitizePath('rootPath');
+    sanitizePath('stagingPath');
+    sanitizePath('outputPath');
+  }
+
+  return config;
 }
 /**
  * 读取数据内所有文件内容

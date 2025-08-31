@@ -17,6 +17,14 @@ export class MapData extends BaseIns {
         createDir("主文件", this.testData);
     }
     public getDataforLong(mainPath:string){
+        const fs = window.require('fs');
+        if (!fs.existsSync(mainPath)) {
+            try {
+                fs.writeFileSync(mainPath, '{}', 'utf8');
+            } catch (error) {
+                console.error(`Failed to create 主文件.json:`, error);
+            }
+        }
         const data = readJsonFile(mainPath)  as { [key: string]: any } ;
         if (data === null) return;
         Object.keys(data).forEach((key) => {

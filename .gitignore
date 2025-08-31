@@ -28,3 +28,6 @@ pnpm-debug.log*
 # test output
 /test
 /test2
+/aaa
+/bbb
+/ccc

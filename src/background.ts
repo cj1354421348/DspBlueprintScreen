@@ -12,14 +12,13 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 async function createWindow() {
-  // Create the browser window.
   Menu.setApplicationMenu(null) // null值取消顶部菜单栏
+  // Create the browser window.
   const win = new BrowserWindow({
     width: 1920,
     height: 1080,
-    //autoHideMenuBar: true,
     webPreferences: {
-      devTools: !app.isPackaged, // 禁用开发者工具
+      devTools: true,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
@@ -45,6 +44,12 @@ async function createWindow() {
     win.loadURL('app://./index.html')
   }
 }
+
+app.on('will-quit', () => {
+  // Unregister all shortcuts.
+  const { globalShortcut } = require('electron');
+  globalShortcut.unregisterAll();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -73,6 +78,16 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:')
     }
   }
+
+  // Register global shortcuts to open/close devtools
+  const { globalShortcut } = require('electron');
+  
+  globalShortcut.register('CommandOrControl+Shift+I', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      win.webContents.toggleDevTools();
+    }
+  });
   createWindow()
 })
 
