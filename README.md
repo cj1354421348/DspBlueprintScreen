@@ -30,3 +30,9 @@
 ```bash
 yarn electron:build
 ```
+
+---
+
+## 扩展新建筑
+
+如果需要添加对新建筑的支持，请查阅 [扩展建筑指南 (EXTENSION_GUIDE.md)](EXTENSION_GUIDE.md)。
