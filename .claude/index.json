@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-09-01T16:19:50Z",
+  "modules": [
+    {
+      "path": "./",
+      "name": "dsp_blueprint_screen",
+      "language": "TypeScript",
+      "entry_points": [
+        "src/background.ts",
+        "src/main.ts"
+      ],
+      "interfaces": [
+        "src/router/index.ts"
+      ],
+      "data_models": [],
+      "tests": [],
+      "important_paths": [
+        "src/AppIO/",
+        "src/blueprint/",
+        "config.json"
+      ]
+    }
+  ],
+  "coverage": {
+    "total_files_estimated": 300,
+    "scanned_files": 10,
+    "coverage_percentage": 3.3,
+    "unscanned_areas": [
+      {
+        "path": "src/AppIO/",
+        "reason": "Needs deeper analysis for file I/O logic."
+      },
+      {
+        "path": "src/blueprint/",
+        "reason": "Core blueprint parsing and management logic requires detailed scanning."
+      },
+      {
+        "path": "src/views/",
+        "reason": "Vue components and UI logic not yet analyzed."
+      }
+    ],
+    "gaps": [
+      "No test files found.",
+      "Data models for blueprints are not explicitly defined or scanned.",
+      "Detailed component hierarchy in `src/views/` is unknown."
+    ]
+  },
+  "scan_summary": {
+    "truncated": true,
+    "truncation_reason": "Initial scan focused on high-level structure. Deep file content analysis was deferred.",
+    "ignored_dirs_top": [
+      "dist_electron/"
+    ]
+  }
+}
