@@ -2,7 +2,8 @@
 
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import * as remote from '@electron/remote/main'
+import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import { Menu } from 'electron'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -24,9 +25,9 @@ async function createWindow() {
       nodeIntegration: (process.env
           .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      enableRemoteModule: true,   // 允許在 Render Process 使用 Remote Module
     },
   })
+  remote.enable(win.webContents)
   // 禁用菜单栏中的开发者工具选项
   // win.removeMenu();
   // win.webContents.on('before-input-event', (event, input) => {
@@ -70,10 +71,11 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+  remote.initialize()
   // if (isDevelopment && !process.env.IS_TEST) {
   //   // Install Vue Devtools
   //   try {
-  //     await installExtension(VUEJS3_DEVTOOLS)
+  //     await installExtension(VUEJS_DEVTOOLS)
   //   } catch (e) {
   //     console.error('Vue Devtools failed to install:')
   //   }

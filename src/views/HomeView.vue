@@ -77,11 +77,10 @@
 import { BlueprintData, fromStr } from "@/blueprint/parser";
 import {
   getAllFiles,
-  getConfigPath,
-  getExePath,
   readFiles,
   readJsonFile,
 } from "@/AppIO/Read";
+import { configManager } from "@/AppIO/ConfigManager";
 import { MapData } from "@/MyIns/MapData";
 import { newBaseData } from "@/DataType/BaseData";
 import { copyFile, createDir, itemDataToJson } from "@/AppIO/Write";
@@ -105,13 +104,14 @@ const options = ref({
   background: "rgba(0, 0, 0, 0.7)",
 });
 onMounted(() => {
-  config = getConfigPath() as config;
+  let config = configManager.getConfig();
   MapData.getInstance().getDataforLong(config.stagingPath + "\\主文件.json");
 });
 /**
  * 初始化蓝图
  */
 const populateSpawnData = async () => {
+  const config = configManager.getConfig();
   const loading = ElLoading.service(options.value);
   MapPool._clear();
   MapData.getInstance().clearData();
@@ -219,6 +219,7 @@ const simpleFilter = async function () {
 
 //导出筛选蓝图
 const exportFilterBluepr = async function () {
+  const config = configManager.getConfig();
   options.value.text = "导出中...";
   const loading = ElLoading.service(options.value);
   console.log(outBluepr);
@@ -265,10 +266,10 @@ const buildingCounter = function (data: BlueprintData, mapKey: string) {
   return counter;
 };
 const open2 = () => {
-  let aaa = getExePath();
+  const config = configManager.getConfig();
   ElMessage({
     showClose: true,
-    message: aaa,
+    message: "This is a test message. Config root path is: " + config.rootPath,
     type: "success",
   });
 };

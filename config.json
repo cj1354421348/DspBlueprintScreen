@@ -1,5 +1,5 @@
 {
-    "rootPath":"./aaa",
-    "stagingPath":"./bbb",
-    "outputPath":"./ccc"
+  "rootPath": "D:\\ku\\DspBlueprintScreen\\test",
+  "stagingPath": "D:\\ku\\DspBlueprintScreen\\bbb",
+  "outputPath": "D:\\ku\\DspBlueprintScreen\\ccc"
 }

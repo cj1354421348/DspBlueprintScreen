@@ -45,15 +45,14 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
-import { getConfigPath } from '../AppIO/Read';
-import { writeConfigFile } from '../AppIO/Write';
+import { configManager } from '../AppIO/ConfigManager';
 import { QuestionFilled } from '@element-plus/icons-vue'
 
 export interface SettingsDialogInstance {
   openDialog: () => void;
 }
 
-const electron = window.require('electron');
+const remote = window.require('@electron/remote');
 
 export default defineComponent({
   name: 'SettingsDialog',
@@ -69,14 +68,11 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      const existingConfig = getConfigPath();
-      if (existingConfig) {
-        config.value = existingConfig;
-      }
+      config.value = configManager.getConfig();
     });
 
     const selectDirectory = async (key: 'rootPath' | 'stagingPath' | 'outputPath') => {
-      const result = await electron.remote.dialog.showOpenDialog({
+      const result = await remote.dialog.showOpenDialog({
         properties: ['openDirectory'],
       });
       if (!result.canceled && result.filePaths.length > 0) {
@@ -85,15 +81,12 @@ export default defineComponent({
     };
 
     const saveConfig = () => {
-      writeConfigFile(config.value);
+      configManager.saveConfig(config.value);
       dialogVisible.value = false;
     };
     
     const openDialog = () => {
-      const existingConfig = getConfigPath();
-      if (existingConfig) {
-        config.value = existingConfig;
-      }
+      config.value = configManager.getConfig();
       dialogVisible.value = true;
     };
 

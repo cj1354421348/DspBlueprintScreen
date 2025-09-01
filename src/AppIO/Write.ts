@@ -4,9 +4,8 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { getConfigPath } from './Read';
 import { newitemData } from '@/DataType/tiemData';
-const config: config = getConfigPath() as config;
+import { configManager } from './ConfigManager';
 /**
  *  保存Map类型文件到系统
  * @param fileName 
@@ -14,6 +13,7 @@ const config: config = getConfigPath() as config;
  * @returns 
  */
 export function createDir(fileName: string, content: Map<any, any>): Promise<string> {
+    const config = configManager.getConfig();
     const mapObject = Object.fromEntries(content);
     const dirPath = config.stagingPath;
     return new Promise((resolve, reject) => {
@@ -72,6 +72,7 @@ export function copyFile(src: string, dest: string): Promise<void> {
     });
 }
 export function itemDataToJson(fileName: string, content: newitemData): Promise<string> {
+    const config = configManager.getConfig();
     const dirPath = config.stagingPath;
     return new Promise((resolve, reject) => {
         fs.mkdir(dirPath, { recursive: true }, (err) => {
@@ -99,27 +100,7 @@ export function itemDataToJson(fileName: string, content: newitemData): Promise<
     });
 };
 
-const electron = window.require('electron');
+const remote = window.require('@electron/remote');
 import { TipError, Tipsessage } from '@/Toop/Tips';
 
-export function writeConfigFile(config: any) {
-  const isDev = !electron.remote.app.isPackaged;
-  let appRoot: string;
-
-  if (isDev) {
-    appRoot = path.join(electron.remote.app.getAppPath(), '..');
-  } else {
-    appRoot = path.dirname(electron.remote.app.getPath("exe"));
-  }
-
-  const configFilePath = path.join(appRoot, 'config.json');
-
-  try {
-    fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2));
-    Tipsessage('配置已保存');
-  } catch (error) {
-    console.error(`写入JSON文件出错：${error}`);
-    TipError('配置保存失败');
-  }
-}
 

@@ -39,6 +39,7 @@ module.exports = defineConfig({
 
         },
         nodeIntegration:true,
+        externals: ['@electron/remote'],
         
     },
 },
@@ -48,6 +49,5 @@ pages: {
     entry: 'src/main.ts',
     title: '',
   },
-}
-//configureWebpack: { externals:{"fs": 'require("fs")',"path": 'require("path")'},target: 'electron-renderer' }
+},
 })

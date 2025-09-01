@@ -1,7 +1,10 @@
 .DS_Store
 node_modules
 /dist
-
+# AI
+.bmad-core
+.claude/commands/BMad
+docs/
 
 # local env files
 .env.local

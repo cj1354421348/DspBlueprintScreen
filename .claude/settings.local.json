@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn outdated:*)",
+      "Bash(yarn install)",
+      "Bash(yarn install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
