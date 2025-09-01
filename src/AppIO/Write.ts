@@ -99,3 +99,27 @@ export function itemDataToJson(fileName: string, content: newitemData): Promise<
     });
 };
 
+const electron = window.require('electron');
+import { TipError, Tipsessage } from '@/Toop/Tips';
+
+export function writeConfigFile(config: any) {
+  const isDev = !electron.remote.app.isPackaged;
+  let appRoot: string;
+
+  if (isDev) {
+    appRoot = path.join(electron.remote.app.getAppPath(), '..');
+  } else {
+    appRoot = path.dirname(electron.remote.app.getPath("exe"));
+  }
+
+  const configFilePath = path.join(appRoot, 'config.json');
+
+  try {
+    fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2));
+    Tipsessage('配置已保存');
+  } catch (error) {
+    console.error(`写入JSON文件出错：${error}`);
+    TipError('配置保存失败');
+  }
+}
+

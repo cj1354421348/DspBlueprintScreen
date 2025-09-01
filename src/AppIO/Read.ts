@@ -111,50 +111,56 @@ export function getConfigPath() {
   }
 
   const configFilePath = path.join(appRoot, 'config.json');
-  const config = readConfigFile(configFilePath);
+  let config = readConfigFile(configFilePath);
 
-  if (config) {
-    const fallbacks = {
-      rootPath: './aaa',
-      stagingPath: './bbb',
-      outputPath: './ccc'
+  if (!config) {
+    config = {
+      rootPath: '',
+      stagingPath: '',
+      outputPath: '',
     };
+  }
 
-    const sanitizePath = (key: keyof typeof fallbacks) => {
-      const userPath = config[key];
-      const safeFallbackDir = electron.remote.app.getPath('userData');
-      let finalPath: string;
+  const fallbacks = {
+    rootPath: './aaa',
+    stagingPath: './bbb',
+    outputPath: './ccc'
+  };
 
-      if (userPath) {
-        // Resolve the user path relative to the app root to handle both absolute and relative paths correctly.
-        const resolvedPath = path.resolve(appRoot, userPath);
-        const pathRoot = path.parse(resolvedPath).root;
-        
-        if (fs.existsSync(pathRoot)) {
-          finalPath = resolvedPath;
-        } else {
-          console.warn(`Path for ${key} ("${userPath}") is invalid. Falling back to default user data directory.`);
-          finalPath = path.join(safeFallbackDir, fallbacks[key]);
-        }
+  const sanitizePath = (key: keyof typeof fallbacks, aconfig:config) => {
+    const userPath = aconfig[key];
+    const safeFallbackDir = electron.remote.app.getPath('userData');
+    let finalPath: string;
+
+    if (userPath) {
+      // Resolve the user path relative to the app root to handle both absolute and relative paths correctly.
+      const resolvedPath = path.resolve(appRoot, userPath);
+      const pathRoot = path.parse(resolvedPath).root;
+      
+      if (fs.existsSync(pathRoot)) {
+        finalPath = resolvedPath;
       } else {
+        console.warn(`Path for ${key} ("${userPath}") is invalid. Falling back to default user data directory.`);
         finalPath = path.join(safeFallbackDir, fallbacks[key]);
       }
-      
-      if (!fs.existsSync(finalPath)) {
-        try {
-          fs.mkdirSync(finalPath, { recursive: true });
-        } catch (e) {
-          console.error(`Failed to create directory ${finalPath} for ${key}`);
-          TipError(`创建目录 ${key} 失败`);
-        }
+    } else {
+      finalPath = path.join(safeFallbackDir, fallbacks[key]);
+    }
+    
+    if (!fs.existsSync(finalPath)) {
+      try {
+        fs.mkdirSync(finalPath, { recursive: true });
+      } catch (e) {
+        console.error(`Failed to create directory ${finalPath} for ${key}`);
+        TipError(`创建目录 ${key} 失败`);
       }
-      config[key] = finalPath;
-    };
+    }
+    aconfig[key] = finalPath;
+  };
 
-    sanitizePath('rootPath');
-    sanitizePath('stagingPath');
-    sanitizePath('outputPath');
-  }
+  sanitizePath('rootPath',config);
+  sanitizePath('stagingPath',config);
+  sanitizePath('outputPath',config);
 
   return config;
 }
