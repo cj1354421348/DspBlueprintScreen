@@ -2,6 +2,7 @@
 
 ### 变更记录 (Changelog)
 
+- **2025-09-04**: 执行了全面的架构分析。更新了根级 `CLAUDE.md` 中的模块结构图和模块索引，并为新识别的核心模块创建了文档骨架。
 - **2025-09-01 17:19:57**: 手动执行深度项目扫描，扩充了模块索引，并开始为核心模块创建详细的 `CLAUDE.md` 文档。
 - **2025-09-01 16:19:50**: 执行了初始化架构扫描。生成了项目总览、模块结构图，并识别出核心目录与技术栈。当前扫描覆盖率较低，核心业务逻辑待深入分析。
 
@@ -33,6 +34,22 @@ graph TD
     B --> F["store (状态管理)"];
     B --> G["views (视图组件)"];
     B --> H["assets (静态资源)"];
+    B --> I["AppConfig (应用配置)"];
+    B --> J["DataType (全局数据类型)"];
+    B --> K["MyIns (自定义实例管理)"];
+    B --> L["Toop (工具函数)"];
+    B --> M["components (全局可复用UI组件)"];
+
+    click C "./src/AppIO/CLAUDE.md" "查看 AppIO 模块文档"
+    click D "./src/blueprint/CLAUDE.md" "查看 blueprint 模块文档"
+    click E "./src/router/CLAUDE.md" "查看 router 模块文档"
+    click F "./src/store/CLAUDE.md" "查看 store 模块文档"
+    click G "./src/views/CLAUDE.md" "查看 views 模块文档"
+    click I "./src/AppConfig/CLAUDE.md" "查看 AppConfig 模块文档"
+    click J "./src/DataType/CLAUDE.md" "查看 DataType 模块文档"
+    click K "./src/MyIns/CLAUDE.md" "查看 MyIns 模块文档"
+    click L "./src/Toop/CLAUDE.md" "查看 Toop 模块文档"
+    click M "./src/components/CLAUDE.md" "查看 components 模块文档"
 ```
 
 ### 模块索引 (Module Index)
@@ -40,14 +57,16 @@ graph TD
 | 模块路径 | 主要语言 | 职责描述 | 关键文件/入口 |
 | :--- | :--- | :--- | :--- |
 | `src/` | TypeScript | 应用源代码根目录 | `background.ts`, `main.ts` |
-| `src/AppConfig/`| TypeScript | 应用配置管理 | `config.ts` |
+| [`src/AppConfig/`](./src/AppConfig/CLAUDE.md)| TypeScript | 应用配置管理 | `config.ts` |
 | [`src/AppIO/`](./src/AppIO/CLAUDE.md) | TypeScript | 文件系统交互抽象 | `ConfigManager.ts`, `Read.ts`, `Write.ts` |
 | [`src/blueprint/`](./src/blueprint/CLAUDE.md)| TypeScript | 蓝图解析与管理核心逻辑 | `parser.ts`, `replace.ts` |
-| `src/components/`| Vue/TS | 全局可复用UI组件 | `HelloWorld.vue` |
+| [`src/components/`](./src/components/CLAUDE.md)| Vue/TS | 全局可复用UI组件 | `HelloWorld.vue` |
 | `src/data/` | TypeScript | 游戏静态数据 (物品, 配方) | `items.ts`, `recipes.ts`, `icons.ts`|
-| `src/DataType/` | TypeScript | 全局数据类型定义 | `BaseData.ts`, `tiemData.ts` |
+| [`src/DataType/`](./src/DataType/CLAUDE.md) | TypeScript | 全局数据类型定义 | `BaseData.ts`, `tiemData.ts` |
+| [`src/MyIns/`](./src/MyIns/CLAUDE.md) | TypeScript | 自定义实例与选择管理 | `BaseIns.ts`, `SeleceManag.ts`, `MapData.ts` |
 | [`src/router/`](./src/router/CLAUDE.md) | TypeScript | 前端路由配置 | `index.ts` |
 | [`src/store/`](./src/store/CLAUDE.md) | TypeScript | Vuex 状态管理 (骨架) | `index.ts` |
+| [`src/Toop/`](./src/Toop/CLAUDE.md) | TypeScript | 通用工具函数 | `MapPool.ts`, `Tips.ts`, `BuilToop.ts` |
 | [`src/views/`](./src/views/CLAUDE.md) | Vue/TS | 页面级视图组件 | `HomeView.vue`, `Settings.vue` |
 | `src/assets/` | - | 静态资源 (图片, 样式) | - |
 
