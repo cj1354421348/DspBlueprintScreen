@@ -61,34 +61,47 @@ defineExpose({ clearSelection })
 // });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .icon {
   display: inline-block;
   position: relative;
-  width: 3.7rem;
+  width: 3.2rem;
   border: 2px solid transparent;
-  transition: border-color 0.3s;
+  border-radius: var(--dsp-border-radius-sm, 4px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+
+  &:hover {
+    background: rgba(64, 158, 255, 0.08);
+    border-color: rgba(64, 158, 255, 0.3);
+    transform: scale(1.05);
+  }
 
   &.has-count {
     padding-bottom: 0.4em;
   }
 
   &.selected {
-    border-color: blue;
+    border-color: var(--el-color-primary, #409eff);
+    background: rgba(64, 158, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
   }
 
   img {
     width: 100%;
     display: block;
+    border-radius: 2px;
   }
 
   .count {
     position: absolute;
-    right: 0;
-    bottom: 0;
-    font-size: 0.8em;
-    color: cyan;
-    text-shadow: 0 0 10px cyan;
+    right: 2px;
+    bottom: 2px;
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #67c23a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 
   .name {
@@ -96,8 +109,10 @@ defineExpose({ clearSelection })
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    font-size: 0.8em;
-    /* 设置字体大小 */
+    font-size: 0.7em;
+    text-align: center;
+    color: var(--dsp-text-secondary, #909399);
+    margin-top: 2px;
   }
 }
 </style>

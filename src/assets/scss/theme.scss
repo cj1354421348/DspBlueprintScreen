@@ -1,0 +1,178 @@
+// DSP 蓝图筛选工具 - 全局主题变量
+// 明亮现代风设计系统
+
+:root {
+  // 主色调
+  --dsp-primary: #409eff;
+  --dsp-primary-light: #66b1ff;
+  --dsp-primary-dark: #3a8ee6;
+
+  // 功能色
+  --dsp-success: #67c23a;
+  --dsp-warning: #e6a23c;
+  --dsp-danger: #f56c6c;
+  --dsp-info: #909399;
+
+  // 背景色
+  --dsp-bg-page: #f5f7fa;
+  --dsp-bg-card: #ffffff;
+  --dsp-bg-sidebar: #ffffff;
+  --dsp-bg-header: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  // 文字色
+  --dsp-text-primary: #303133;
+  --dsp-text-regular: #606266;
+  --dsp-text-secondary: #909399;
+  --dsp-text-placeholder: #c0c4cc;
+
+  // 边框
+  --dsp-border-color: #dcdfe6;
+  --dsp-border-light: #e4e7ed;
+  --dsp-border-radius: 8px;
+  --dsp-border-radius-sm: 4px;
+
+  // 阴影
+  --dsp-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --dsp-shadow-base: 0 2px 12px rgba(0, 0, 0, 0.1);
+  --dsp-shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+
+  // 间距
+  --dsp-spacing-xs: 4px;
+  --dsp-spacing-sm: 8px;
+  --dsp-spacing-md: 16px;
+  --dsp-spacing-lg: 24px;
+  --dsp-spacing-xl: 32px;
+
+  // 布局尺寸
+  --dsp-header-height: 56px;
+  --dsp-sidebar-width: 340px;
+
+  // 动画
+  --dsp-transition-fast: 0.15s ease;
+  --dsp-transition-base: 0.3s ease;
+}
+
+// 全局重置和基础样式
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--dsp-bg-page);
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color: var(--dsp-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100%;
+}
+
+// 自定义滚动条
+* {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(144, 147, 153, 0.3);
+    border-radius: 3px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(144, 147, 153, 0.5);
+    }
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+// 卡片通用样式
+.dsp-card {
+  background: var(--dsp-bg-card);
+  border-radius: var(--dsp-border-radius);
+  box-shadow: var(--dsp-shadow-sm);
+  padding: var(--dsp-spacing-md);
+  transition: box-shadow var(--dsp-transition-base);
+
+  &:hover {
+    box-shadow: var(--dsp-shadow-base);
+  }
+}
+
+// 标题样式
+.dsp-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dsp-text-primary);
+  margin: 0 0 var(--dsp-spacing-md) 0;
+}
+
+.dsp-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dsp-text-regular);
+  margin: 0 0 var(--dsp-spacing-sm) 0;
+}
+
+// 自定义按钮样式
+.dsp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+  }
+
+  &--ghost {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    backdrop-filter: blur(4px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+
+  &--icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+}
