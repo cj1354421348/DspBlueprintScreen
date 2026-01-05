@@ -236,13 +236,15 @@ const handleFilter = async () => {
 
   try {
     outBluepr.clear();
-    filterResults.value = [];
     selectedIds.value.clear();
 
     const data = MapData.getInstance().testData;
     const seleceData = SeleceManag.getInstance().seleceIconArr;
     const excludeData = SeleceManag.getInstance().excludeIconArr;
     const itemIdData = SeleceManag.getInstance().containBuildArr;
+
+    // 使用临时数组收集结果，避免边筛选边触发渲染
+    const tempResults: newBaseData[] = [];
 
     for (const [index, element] of data.entries()) {
       await new Promise<void>((resolve) => {
@@ -271,7 +273,7 @@ const handleFilter = async () => {
               const test = (!seleceData.length && itemIdData.length) || hasOverlap;
               if (test && hasNoExclude && isMax && hasitemId) {
                 outBluepr.add(index);
-                filterResults.value.push(element);
+                tempResults.push(element);
               }
             }
           } catch (error) {
@@ -282,6 +284,9 @@ const handleFilter = async () => {
         });
       });
     }
+
+    // 筛选完成后一次性更新，避免多次触发渲染
+    filterResults.value = tempResults;
 
     Tipsessage('筛选完成: ' + outBluepr.size);
   } finally {
