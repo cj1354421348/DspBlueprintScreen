@@ -1,0 +1,58 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # 推送 v 开头的标签时触发，如 v1.0.0
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Get version from package.json
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
+          echo "版本号: v$VERSION"
+
+      - name: Build Electron app
+        run: yarn electron:build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          name: DSP 蓝图筛选工具 ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## 📦 下载说明
+            - **Windows**: 下载 `.exe` 安装包
+            
+            ## 📋 版本信息
+            - 版本号: `${{ steps.get_version.outputs.VERSION }}`
+            - 构建时间: ${{ github.event.head_commit.timestamp || github.event.repository.updated_at }}
+          files: |
+            dist_electron/*.exe
+            dist_electron/*.exe.blockmap
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
