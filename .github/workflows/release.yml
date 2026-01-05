@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write  # 授权创建 Release
     
     steps:
       - name: Checkout code
