@@ -33,6 +33,21 @@ jobs:
           echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
           echo "版本号: v$VERSION"
 
+      - name: Extract changelog for version
+        id: changelog
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          # 提取对应版本号的内容（从 ## vX.X.X 到下一个 ## 或文件结束）
+          NOTES=$(awk "/^## v$VERSION$/,/^## v[0-9]/{if(/^## v[0-9]/ && !/^## v$VERSION$/)exit; print}" CHANGELOG.md | tail -n +2)
+          if [ -z "$NOTES" ]; then
+            NOTES="版本 v$VERSION 发布"
+          fi
+          # 处理多行输出
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Build Electron app
         run: yarn electron:build
         env:
@@ -47,7 +62,10 @@ jobs:
             ## 📦 下载说明
             - **Windows**: 下载 `.exe` 安装包
             
-            ## 📋 版本信息
+            ## 📋 更新内容
+            ${{ steps.changelog.outputs.NOTES }}
+            
+            ## ℹ️ 版本信息
             - 版本号: `${{ steps.get_version.outputs.VERSION }}`
             - 构建时间: ${{ github.event.head_commit.timestamp || github.event.repository.updated_at }}
           files: |
