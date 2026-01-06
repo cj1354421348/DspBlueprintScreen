@@ -38,8 +38,8 @@ jobs:
         shell: bash
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          # 提取对应版本号的内容（从 ## vX.X.X 到下一个 ## 或文件结束）
-          NOTES=$(awk "/^## v$VERSION$/,/^## v[0-9]/{if(/^## v[0-9]/ && !/^## v$VERSION$/)exit; print}" CHANGELOG.md | tail -n +2)
+          # 移除 Windows CRLF 换行符，提取对应版本号的内容
+          NOTES=$(sed 's/\r$//' CHANGELOG.md | awk "/^## v${VERSION}$/,/^## v[0-9]/{if(/^## v[0-9]/ && !/^## v${VERSION}$/)exit; print}" | tail -n +2)
           if [ -z "$NOTES" ]; then
             NOTES="版本 v$VERSION 发布"
           fi
