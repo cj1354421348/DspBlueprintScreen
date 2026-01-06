@@ -4,7 +4,6 @@ node_modules
 # AI
 .bmad-core
 .claude/commands/BMad
-docs/
 
 # local env files
 .env.local
