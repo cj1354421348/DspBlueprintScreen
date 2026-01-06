@@ -46,10 +46,10 @@
     <div v-else class="result-grid">
       <BlueprintCard
         v-for="bp in results"
-        :key="bp.id"
+        :key="bp.MD5"
         :blueprint="bp"
-        :selected="localSelectedIds.has(bp.id)"
-        @toggle="toggleSelection(bp.id)"
+        :selected="localSelectedIds.has(bp.MD5)"
+        @toggle="toggleSelection(bp.MD5)"
       />
     </div>
   </div>
@@ -80,19 +80,19 @@ watch(() => props.selectedIds, (newVal) => {
 
 const selectedCount = computed(() => localSelectedIds.value.size);
 
-const toggleSelection = (id: string) => {
+const toggleSelection = (md5: string) => {
   const newSet = new Set(localSelectedIds.value);
-  if (newSet.has(id)) {
-    newSet.delete(id);
+  if (newSet.has(md5)) {
+    newSet.delete(md5);
   } else {
-    newSet.add(id);
+    newSet.add(md5);
   }
   localSelectedIds.value = newSet;
   emit('update:selected-ids', newSet);
 };
 
 const selectAll = () => {
-  const newSet = new Set(props.results.map(bp => bp.id));
+  const newSet = new Set(props.results.map(bp => bp.MD5));
   localSelectedIds.value = newSet;
   emit('update:selected-ids', newSet);
 };

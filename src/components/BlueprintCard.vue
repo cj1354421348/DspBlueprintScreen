@@ -11,7 +11,7 @@
     <div class="card-body">
       <div class="card-info">
         <el-icon><Document /></el-icon>
-        <span class="info-text">{{ blueprint.id }}</span>
+        <span class="info-text" :title="blueprint.MD5">{{ blueprint.MD5.slice(0, 8) }}...</span>
       </div>
     </div>
   </div>
@@ -22,7 +22,7 @@ import { Document } from '@element-plus/icons-vue';
 
 defineProps<{
   blueprint: {
-    id: string;
+    MD5: string;
     name: string;
     path: string;
     outPath: string;
@@ -38,14 +38,14 @@ defineEmits<{
 <style lang="scss" scoped>
 .blueprint-card {
   background: var(--dsp-bg-card);
-  border: 1px solid var(--dsp-border-light);
+  border: 2px solid var(--dsp-border-light);
   border-radius: var(--dsp-border-radius);
   padding: var(--dsp-spacing-md);
   cursor: pointer;
   transition: all var(--dsp-transition-base);
 
-  &:hover {
-    border-color: var(--el-color-primary-light-5);
+  &:hover:not(.selected) {
+    border-color: var(--dsp-border-color);
     box-shadow: var(--dsp-shadow-base);
     transform: translateY(-2px);
   }
@@ -53,6 +53,7 @@ defineEmits<{
   &.selected {
     border-color: var(--el-color-primary);
     background: var(--el-color-primary-light-9);
+    box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.2);
   }
 }
 

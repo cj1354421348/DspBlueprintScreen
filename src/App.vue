@@ -52,7 +52,7 @@
           :is-initialized="isInitialized"
           :result-count="filterResults.length"
           :selected-ids="selectedIds"
-          @update:selected-ids="selectedIds = $event"
+          @update:selected-ids="handleSelectionChange"
         />
       </el-main>
     </el-container>
@@ -176,7 +176,7 @@ const handleInit = async () => {
     MapData.getInstance().clearData();
     outBluepr.clear();
     filterResults.value = [];
-    selectedIds.value.clear();
+    selectedIds.value = new Set();
 
     const rootPath = config.rootPath;
     const files = getAllFiles(rootPath);
@@ -236,7 +236,7 @@ const handleFilter = async () => {
 
   try {
     outBluepr.clear();
-    selectedIds.value.clear();
+    selectedIds.value = new Set();
 
     const data = MapData.getInstance().testData;
     const seleceData = SeleceManag.getInstance().seleceIconArr;
@@ -331,11 +331,16 @@ const handleExport = async () => {
   }
 };
 
+// 处理选择变更
+const handleSelectionChange = (newSelection: Set<string>) => {
+  selectedIds.value = new Set(newSelection);
+};
+
 // 清空选择
 const handleClear = () => {
   outBluepr.clear();
   filterResults.value = [];
-  selectedIds.value.clear();
+  selectedIds.value = new Set();
 };
 
 // 计算蓝图中每种建筑的数量
