@@ -33,9 +33,11 @@ class ConfigManager {
   private getAppRoot(): string {
     const isDev = !remote.app.isPackaged;
     if (isDev) {
+      // 开发模式：使用项目根目录
       return path.join(remote.app.getAppPath(), '..');
     } else {
-      return path.dirname(remote.app.getPath("exe"));
+      // 生产模式：使用用户数据目录，避免 Program Files 权限问题
+      return remote.app.getPath('userData');
     }
   }
 
